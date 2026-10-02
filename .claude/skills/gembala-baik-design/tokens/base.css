@@ -1,0 +1,12 @@
+/* Minimal element defaults so specimen cards, kits and consumer pages agree. */
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--surface-page);color:var(--text-body);font-family:var(--font-sans);font-size:var(--size-body);line-height:var(--lh-normal);font-weight:var(--weight-regular);-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4,h5{font-family:var(--font-heading);color:var(--text-heading);font-weight:var(--weight-semibold);margin:0;text-wrap:pretty}
+h1{font-size:var(--size-h1);line-height:var(--lh-snug);letter-spacing:var(--ls-tight)}
+h2{font-size:var(--size-h2);line-height:var(--lh-snug);letter-spacing:var(--ls-tight)}
+h3{font-size:var(--size-h3);line-height:var(--lh-snug)}
+p{margin:0 0 var(--space-3);max-width:68ch}
+a{color:var(--text-link);text-decoration-line:underline;text-decoration-thickness:1px;text-underline-offset:3px;text-decoration-color:var(--blue-300);transition:color var(--dur-fast) var(--ease-standard),text-decoration-color var(--dur-fast) var(--ease-standard)}
+a:hover{color:var(--text-link-hover);text-decoration-color:var(--clay-400)}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--focus-ring);outline-offset:2px;border-radius:var(--radius-sm)}
+::selection{background:var(--gold-100);color:var(--ink-900)}

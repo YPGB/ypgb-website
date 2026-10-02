@@ -7,6 +7,10 @@ const __filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(__filename)
 
 const nextConfig: NextConfig = {
+  output: 'standalone',
+  ...(process.env.WATCH_POLL_INTERVAL_MS && {
+    watchOptions: { pollIntervalMs: Number(process.env.WATCH_POLL_INTERVAL_MS) },
+  }),
   images: {
     localPatterns: [
       {

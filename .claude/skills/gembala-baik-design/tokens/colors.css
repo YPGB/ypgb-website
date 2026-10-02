@@ -1,0 +1,105 @@
+:root{
+  /* --- Brand anchors: exact values from brand palette --- */
+  --wheat-gold:#fed980;      /* primary — fills, buttons */
+  --shepherd-umber:#423326;  /* ink — body text, foreground */
+  --parchment:#fbf4e4;       /* background */
+  --muted-umber:#7a6b58;     /* secondary text */
+  --wax-seal:#7a2e28;        /* accent — sparingly, one deliberate moment */
+  --marian-blue:#2f5788;     /* links only — never decorative */
+  --marian-blue-dark:#5c85b8;/* Marian blue, dark-surface variant (see dark mode) */
+  --ordinary-green:#3b6142;  /* brand green — editorial only; UI success uses Tailwind green */
+  --alert-crimson:#c1322a;   /* brand crimson — editorial only; UI danger uses Tailwind red */
+  --deep-goldenrod:#a9760a;  /* brand goldenrod — editorial only; UI warning uses Tailwind amber */
+
+  /* --- Ramps: blended from the anchors above via oklch color-mix --- */
+  --gold-700:color-mix(in oklch,var(--wheat-gold) 78%,var(--shepherd-umber) 22%);
+  --gold-600:color-mix(in oklch,var(--wheat-gold) 90%,var(--shepherd-umber) 10%);
+  --gold-500:var(--wheat-gold);
+  --gold-300:color-mix(in oklch,var(--wheat-gold) 65%,var(--parchment) 35%);
+  --gold-100:color-mix(in oklch,var(--wheat-gold) 30%,var(--parchment) 70%);
+  --gold-50:color-mix(in oklch,var(--wheat-gold) 14%,var(--parchment) 86%);
+
+  --clay-900:color-mix(in oklch,var(--wax-seal) 82%,black 18%);
+  --clay-700:var(--wax-seal);
+  --clay-600:color-mix(in oklch,var(--wax-seal) 88%,var(--wheat-gold) 12%);
+  --clay-400:color-mix(in oklch,var(--wax-seal) 55%,var(--parchment) 45%);
+  --clay-100:color-mix(in oklch,var(--wax-seal) 18%,var(--parchment) 82%);
+  --clay-50:color-mix(in oklch,var(--wax-seal) 9%,var(--parchment) 91%);
+
+  --sand-950:color-mix(in oklch,var(--shepherd-umber) 96%,black 4%);
+  --sand-900:var(--shepherd-umber);
+  --sand-800:color-mix(in oklch,var(--shepherd-umber) 82%,var(--muted-umber) 18%);
+  --sand-600:var(--muted-umber);
+  --sand-400:color-mix(in oklch,var(--muted-umber) 58%,var(--parchment) 42%);
+  --sand-200:color-mix(in oklch,var(--muted-umber) 24%,var(--parchment) 76%);
+  --sand-100:color-mix(in oklch,var(--muted-umber) 11%,var(--parchment) 89%);
+  --sand-50:var(--parchment);
+
+  --ink-900:var(--shepherd-umber);
+  --ink-700:var(--muted-umber);
+  --white:#FFFFFF;
+
+  --blue-900:color-mix(in oklch,var(--marian-blue) 82%,black 18%);
+  --blue-800:color-mix(in oklch,var(--marian-blue) 90%,black 10%);
+  --blue-700:var(--marian-blue);
+  --blue-600:color-mix(in oklch,var(--marian-blue) 88%,var(--parchment) 12%);
+  --blue-300:color-mix(in oklch,var(--marian-blue) 45%,var(--parchment) 55%);
+  --blue-100:color-mix(in oklch,var(--marian-blue) 18%,var(--parchment) 82%);
+  --blue-50:color-mix(in oklch,var(--marian-blue) 8%,var(--parchment) 92%);
+
+  /* --- Status ramps: Tailwind v4 default palette, exact values and names ---
+     (bg-green-100 === var(--green-100)). NOTE: --blue-* above is the brand
+     Marian ramp, NOT Tailwind blue; info status uses Tailwind sky instead. */
+  --green-50:oklch(98.2% 0.018 155.826); --green-100:oklch(96.2% 0.044 156.743); --green-200:oklch(92.5% 0.084 155.995);
+  --green-600:oklch(62.7% 0.194 149.214); --green-700:oklch(52.7% 0.154 150.069); --green-800:oklch(44.8% 0.119 151.328);
+  --amber-50:oklch(98.7% 0.022 95.277); --amber-100:oklch(96.2% 0.059 95.617); --amber-200:oklch(92.4% 0.12 95.746);
+  --amber-500:oklch(76.9% 0.188 70.08); --amber-600:oklch(66.6% 0.179 58.318); --amber-700:oklch(55.5% 0.163 48.998); --amber-800:oklch(47.3% 0.137 46.201);
+  --red-50:oklch(97.1% 0.013 17.38); --red-100:oklch(93.6% 0.032 17.717); --red-200:oklch(88.5% 0.062 18.334);
+  --red-600:oklch(57.7% 0.245 27.325); --red-700:oklch(50.5% 0.213 27.518); --red-800:oklch(44.4% 0.177 26.899);
+  --sky-50:oklch(97.7% 0.013 236.62); --sky-100:oklch(95.1% 0.026 236.824); --sky-200:oklch(90.1% 0.058 230.902);
+  --sky-600:oklch(58.8% 0.158 241.966); --sky-700:oklch(50% 0.134 242.749); --sky-800:oklch(44.3% 0.11 240.79);
+
+  /* --- Semantic aliases: use these in components --- */
+  --text-heading:var(--ink-900);
+  --text-body:var(--ink-900);
+  --text-muted:var(--sand-600);
+  --text-subtle:var(--ink-700);
+  --text-inverse:var(--white);
+  --text-on-primary:var(--ink-900);
+  --text-accent:var(--clay-700);
+  --text-link:var(--blue-700);
+  --text-link-hover:var(--blue-900);
+  --text-link-onbrand:var(--marian-blue-dark);
+
+  --surface-page:var(--sand-50);
+  --surface-card:color-mix(in oklch,var(--sand-50) 45%,white 55%);
+  --surface-sunken:var(--sand-100);
+  --surface-brand:var(--sand-900);
+  --surface-brand-deep:color-mix(in oklch,var(--sand-900) 88%,black 12%);
+  --surface-brand-soft:var(--sand-100);
+  --surface-primary:var(--gold-500);
+  --surface-primary-hover:var(--gold-600);
+  --surface-accent:var(--clay-600);
+  --surface-accent-soft:var(--clay-50);
+  --surface-warm:var(--sand-100);
+
+  --border-hairline:var(--sand-200);
+  --border-quiet:color-mix(in oklch,var(--sand-200) 65%,var(--parchment) 35%);
+  --border-strong:var(--sand-400);
+  --border-brand:var(--gold-300);
+
+  /* Status: fg = 800, bg = 100, border = 200, solid (icons, edges) = 600 */
+  --status-success-fg:var(--green-800); --status-success-bg:var(--green-100); --status-success-border:var(--green-200); --status-success-solid:var(--green-600);
+  --status-warning-fg:var(--amber-800); --status-warning-bg:var(--amber-100); --status-warning-border:var(--amber-200); --status-warning-solid:var(--amber-600);
+  --status-danger-fg:var(--red-800);    --status-danger-bg:var(--red-100);    --status-danger-border:var(--red-200);    --status-danger-solid:var(--red-600);
+  --status-info-fg:var(--sky-800);      --status-info-bg:var(--sky-100);      --status-info-border:var(--sky-200);      --status-info-solid:var(--sky-600);
+
+  --focus-ring:var(--clay-600);
+  --overlay-scrim:rgba(66,51,38,.52);
+}
+/* Dark mode: every color stays fixed except Marian blue, which lightens for
+   contrast against dark surfaces — the only token this scope overrides. */
+:root[data-theme="dark"]{
+  --text-link:var(--marian-blue-dark);
+  --text-link-hover:color-mix(in oklch,var(--marian-blue-dark) 82%,white 18%);
+}

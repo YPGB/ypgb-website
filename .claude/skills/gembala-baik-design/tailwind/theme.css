@@ -1,0 +1,73 @@
+/* YPGB × Tailwind v4 — brand theme.
+   In the app's main CSS:
+     @import "tailwindcss";
+     @import "<ds>/styles.css";          brand tokens, base styles, .gb-* component classes
+     @import "<ds>/tailwind/theme.css";  this file
+   Radius, shadow, breakpoints and status colors (green/amber/red/sky) are left as
+   Tailwind defaults; tokens/*.css mirrors them 1:1 by name, so `rounded-lg` and
+   var(--radius-lg) are the same value. Brand colors resolve to the CSS variables,
+   so tokens/colors.css stays the single source of truth. */
+
+@theme {
+  --font-display: "Geist", ui-sans-serif, system-ui, sans-serif;
+  --font-heading: "Zilla Slab", Georgia, "Times New Roman", serif;
+  --font-sans: "Figtree", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --text-display-1: 56px; --text-display-1--line-height: 1.08; --text-display-1--letter-spacing: -0.02em;
+  --text-display-2: 42px; --text-display-2--line-height: 1.08; --text-display-2--letter-spacing: -0.02em;
+  --text-h1: 34px; --text-h1--line-height: 1.25; --text-h1--letter-spacing: -0.01em;
+  --text-h2: 27px; --text-h2--line-height: 1.25; --text-h2--letter-spacing: -0.01em;
+  --text-h3: 21px; --text-h3--line-height: 1.25;
+  --text-lead: 19px; --text-lead--line-height: 1.5;
+  --text-base: 17px; --text-base--line-height: 1.5;
+  --text-small: 15px; --text-small--line-height: 1.5;
+  --text-caption: 13px; --text-caption--line-height: 1.4;
+  --text-overline: 12px; --text-overline--letter-spacing: 0.14em;
+
+  --container-site: 1120px;
+  --container-prose: 720px;
+}
+
+@theme inline {
+  --color-wheat: var(--wheat-gold);
+  --color-wheat-50: var(--gold-50); --color-wheat-100: var(--gold-100); --color-wheat-300: var(--gold-300);
+  --color-wheat-500: var(--gold-500); --color-wheat-600: var(--gold-600); --color-wheat-700: var(--gold-700);
+
+  --color-umber: var(--shepherd-umber);
+  --color-umber-50: var(--sand-50); --color-umber-100: var(--sand-100); --color-umber-200: var(--sand-200);
+  --color-umber-400: var(--sand-400); --color-umber-600: var(--sand-600); --color-umber-800: var(--sand-800);
+  --color-umber-900: var(--sand-900); --color-umber-950: var(--sand-950);
+
+  --color-seal: var(--wax-seal);
+  --color-seal-50: var(--clay-50); --color-seal-100: var(--clay-100); --color-seal-400: var(--clay-400);
+  --color-seal-600: var(--clay-600); --color-seal-700: var(--clay-700); --color-seal-900: var(--clay-900);
+
+  --color-marian: var(--marian-blue);
+  --color-marian-50: var(--blue-50); --color-marian-100: var(--blue-100); --color-marian-300: var(--blue-300);
+  --color-marian-600: var(--blue-600); --color-marian-700: var(--blue-700); --color-marian-800: var(--blue-800);
+  --color-marian-900: var(--blue-900);
+
+  --color-parchment: var(--parchment);
+
+  /* Semantic — prefer these in product code */
+  --color-page: var(--surface-page);
+  --color-card: var(--surface-card);
+  --color-sunken: var(--surface-sunken);
+  --color-brand: var(--surface-brand);
+  --color-brand-deep: var(--surface-brand-deep);
+  --color-brand-soft: var(--surface-brand-soft);
+  --color-primary: var(--surface-primary);
+  --color-primary-hover: var(--surface-primary-hover);
+  --color-on-primary: var(--text-on-primary);
+  --color-accent: var(--surface-accent);
+  --color-accent-soft: var(--surface-accent-soft);
+  --color-ink: var(--text-body);
+  --color-ink-muted: var(--text-muted);
+  --color-ink-subtle: var(--text-subtle);
+  --color-link: var(--text-link);
+  --color-link-hover: var(--text-link-hover);
+  --color-hairline: var(--border-hairline);
+  --color-quiet: var(--border-quiet);
+  --color-strong: var(--border-strong);
+  --color-focus: var(--focus-ring);
+}

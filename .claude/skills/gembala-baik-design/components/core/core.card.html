@@ -1,0 +1,51 @@
+<!-- @dsCard group="Components" viewport="700x620" name="Core" subtitle="Lockup, Button, IconButton, Badge, Tag, Card, SectionHeading" -->
+<link rel="stylesheet" href="../../styles.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<style>#root .gb-sec__title{font-family:Zilla Slab;text-decoration-line:none;font-size:32px}#root .gb-sec__sub{font-size:16px}</style>
+<div id="root" style="padding:20px;background:var(--surface-page)"></div>
+<script type="text/babel">
+const { Lockup, Button, IconButton, Badge, Tag, Card, SectionHeading, Icon } = window.GembalaBaikDesignSystem_674cc5;
+function Row({children}){return <div style={{display:'flex',gap:10,alignItems:'center',flexWrap:'wrap'}}>{children}</div>}
+function App(){
+  const [sel,setSel]=React.useState(true);
+  return (
+    <div style={{display:'flex',flexDirection:'column',gap:16,fontFamily:'var(--font-sans)'}}>
+      <div style={{display:'flex',gap:24,alignItems:'center',flexWrap:'wrap'}}>
+        <div style={{background:'var(--surface-brand)',color:'var(--text-inverse)',padding:'14px 18px',borderRadius:'var(--radius-lg)',display:'flex',gap:28,alignItems:'center'}}>
+          <Lockup logo="../../assets/logo.png" size="sm" chip />
+          <Lockup logo="../../assets/logo.png" size="md" chip />
+        </div>
+        <Lockup logo="../../assets/logo.png" size="md" tone="onlight" place="Pontianak" />
+      </div>
+      <Row>
+        <Button variant="primary">Primary</Button>
+        <Button variant="accent">Accent</Button>
+        <Button variant="secondary">Secondary</Button>
+        <Button variant="ghost">Ghost</Button>
+        <Button variant="link" iconRight="arrow-right">Link</Button>
+        <Button variant="primary" disabled>Disabled</Button>
+      </Row>
+      <Row>
+        <IconButton icon="search" label="Cari" variant="outline" />
+        <IconButton icon="menu" label="Menu" variant="quiet" />
+        <IconButton icon="heart-handshake" label="Donasi" variant="solid" />
+        <Badge tone="brand" style={{padding:'1px 10px',borderRadius:5}}><span style={{letterSpacing:'0.8px',fontWeight:600}}>SMA</span></Badge>
+        <Badge tone="accent" style={{padding:'1px 10px',borderRadius:5}}><span style={{letterSpacing:'0.8px',fontWeight:600}}>Kegiatan</span></Badge>
+        <Badge tone="success" style={{padding:'1px 10px',borderRadius:5}}><span style={{letterSpacing:'0.8px',fontWeight:600}}>Terakreditasi A</span></Badge>
+        <Tag selected={sel} onClick={()=>setSel(!sel)}>Kegiatan</Tag>
+        <Tag onRemove={()=>{}}>Gedung Unit</Tag>
+      </Row>
+      <Card pad="lg"><SectionHeading overline="Tentang Kami" title="Berdiri sejak 1973" subtitle="Organisasi sosial Katolik yang bergerak di bidang pendidikan." /></Card>
+      <Row>
+        <Card pad="md" style={{flex:1}}><span style={{fontSize:16}}>Default card</span></Card>
+        <Card pad="md" tone="warm" rule style={{flex:1}}><span style={{fontSize:16}}>Warm, ruled card</span></Card>
+        <Card pad="md" tone="brand" style={{flex:1}}><span style={{fontSize:16}}>Brand card</span></Card>
+      </Row>
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>

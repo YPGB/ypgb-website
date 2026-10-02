@@ -1,0 +1,13 @@
+:root{
+  /* Spacing ramp — 4px base, widening steps (x1.4) so large gaps stay generous */
+  --space-0:0px; --space-1:4px; --space-2:8px; --space-3:12px; --space-4:18px;
+  --space-5:26px; --space-6:36px; --space-7:52px; --space-8:72px; --space-9:104px;
+
+  /* Layout */
+  --container-max:1120px;
+  --container-narrow:720px;
+  --container-pad:24px;
+  --header-height:72px;
+  --section-gap:var(--space-9);
+  --grid-gutter:var(--space-5);
+}

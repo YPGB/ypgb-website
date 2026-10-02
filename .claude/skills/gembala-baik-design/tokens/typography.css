@@ -1,0 +1,31 @@
+:root{
+  --font-display:"Geist",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --font-heading:"Zilla Slab",Georgia,"Times New Roman",serif;
+  --font-sans:"Figtree",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --font-mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+
+  /* Type scale — exact px, not a ratio grid */
+  --size-display-1:56px;
+  --size-display-2:42px;
+  --size-h1:34px;
+  --size-h2:27px;
+  --size-h3:21px;
+  --size-lead:19px;
+  --size-body:17px;
+  --size-small:15px;
+  --size-caption:13px;
+  --size-overline:12px;
+
+  --lh-tight:1.08; /* @kind other */
+  --lh-snug:1.25; /* @kind other */
+  --lh-normal:1.5; /* @kind other */
+  --lh-loose:1.65; /* @kind other */
+
+  --ls-display:-0.02em; /* @kind other */
+  --ls-tight:-0.01em; /* @kind other */
+  --ls-normal:0; /* @kind other */
+  --ls-overline:0.14em; /* @kind other */
+
+  --weight-light:300; --weight-regular:400; --weight-medium:500;
+  --weight-semibold:600; --weight-bold:700; --weight-heavy:800;
+}

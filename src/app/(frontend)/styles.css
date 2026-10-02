@@ -1,164 +1,260 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
+@plugin '@tailwindcss/typography';
+
+@custom-variant dark (&:is(.dark *));
+
+/* Gembala Baik brand palette. Anchors are the brand's exact colors; ramp steps are
+   blended from them so every shade traces back to a named brand color. */
 :root {
-  --font-mono: 'Roboto Mono', monospace;
+  --wheat-gold: #fed980;
+  --shepherd-umber: #423326;
+  --parchment: #fbf4e4;
+  --muted-umber: #7a6b58;
+  --wax-seal: #7a2e28;
+  --marian-blue: #2f5788;
+
+  --wheat-50: color-mix(in oklch, var(--wheat-gold) 14%, var(--parchment));
+  --wheat-100: color-mix(in oklch, var(--wheat-gold) 30%, var(--parchment));
+  --wheat-300: color-mix(in oklch, var(--wheat-gold) 65%, var(--parchment));
+  --wheat-500: var(--wheat-gold);
+  --wheat-600: color-mix(in oklch, var(--wheat-gold) 90%, var(--shepherd-umber));
+  --wheat-700: color-mix(in oklch, var(--wheat-gold) 78%, var(--shepherd-umber));
+
+  --umber-50: var(--parchment);
+  --umber-100: color-mix(in oklch, var(--muted-umber) 11%, var(--parchment));
+  --umber-200: color-mix(in oklch, var(--muted-umber) 24%, var(--parchment));
+  --umber-400: color-mix(in oklch, var(--muted-umber) 58%, var(--parchment));
+  --umber-600: var(--muted-umber);
+  --umber-800: color-mix(in oklch, var(--shepherd-umber) 82%, var(--muted-umber));
+  --umber-900: var(--shepherd-umber);
+  --umber-950: color-mix(in oklch, var(--shepherd-umber) 88%, black);
+
+  --seal-50: color-mix(in oklch, var(--wax-seal) 9%, var(--parchment));
+  --seal-100: color-mix(in oklch, var(--wax-seal) 18%, var(--parchment));
+  --seal-400: color-mix(in oklch, var(--wax-seal) 55%, var(--parchment));
+  --seal-600: color-mix(in oklch, var(--wax-seal) 88%, var(--wheat-gold));
+  --seal-700: var(--wax-seal);
+  --seal-900: color-mix(in oklch, var(--wax-seal) 82%, black);
+
+  --marian-50: color-mix(in oklch, var(--marian-blue) 8%, var(--parchment));
+  --marian-100: color-mix(in oklch, var(--marian-blue) 18%, var(--parchment));
+  --marian-300: color-mix(in oklch, var(--marian-blue) 45%, var(--parchment));
+  --marian-600: color-mix(in oklch, var(--marian-blue) 88%, var(--parchment));
+  --marian-700: var(--marian-blue);
+  --marian-900: color-mix(in oklch, var(--marian-blue) 82%, black);
+
+  /* shadcn semantic tokens, mapped to the brand */
+  --background: var(--parchment);
+  --foreground: var(--shepherd-umber);
+  --card: color-mix(in oklch, var(--parchment) 45%, white);
+  --card-foreground: var(--shepherd-umber);
+  --popover: var(--card);
+  --popover-foreground: var(--shepherd-umber);
+  --primary: var(--wheat-gold);
+  --primary-foreground: var(--shepherd-umber);
+  --secondary: var(--umber-100);
+  --secondary-foreground: var(--shepherd-umber);
+  --muted: var(--umber-100);
+  --muted-foreground: var(--muted-umber);
+  --accent: var(--umber-100);
+  --accent-foreground: var(--shepherd-umber);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: var(--umber-200);
+  --input: var(--umber-200);
+  --ring: var(--seal-600);
+  --radius: 0.625rem;
+
+  /* Dark umber bands: header, footer, closing CTA */
+  --brand: var(--shepherd-umber);
+  --brand-deep: var(--umber-950);
+  --brand-foreground: white;
+
+  --chart-1: var(--wheat-500);
+  --chart-2: var(--seal-600);
+  --chart-3: var(--marian-700);
+  --chart-4: var(--umber-600);
+  --chart-5: var(--wheat-700);
+
+  --sidebar: var(--umber-100);
+  --sidebar-foreground: var(--shepherd-umber);
+  --sidebar-primary: var(--wheat-gold);
+  --sidebar-primary-foreground: var(--shepherd-umber);
+  --sidebar-accent: var(--umber-200);
+  --sidebar-accent-foreground: var(--shepherd-umber);
+  --sidebar-border: var(--umber-200);
+  --sidebar-ring: var(--seal-600);
 }
 
-* {
-  box-sizing: border-box;
+@theme {
+  --text-display-1: 56px;
+  --text-display-1--line-height: 1.08;
+  --text-display-1--letter-spacing: -0.02em;
+  --text-display-2: 42px;
+  --text-display-2--line-height: 1.08;
+  --text-display-2--letter-spacing: -0.02em;
+  --text-h1: 34px;
+  --text-h1--line-height: 1.25;
+  --text-h1--letter-spacing: -0.01em;
+  --text-h2: 27px;
+  --text-h2--line-height: 1.25;
+  --text-h2--letter-spacing: -0.01em;
+  --text-h3: 21px;
+  --text-h3--line-height: 1.25;
+  --text-lead: 16px;
+  --text-lead--line-height: 1.6;
+  --text-overline: 12px;
+  --text-overline--letter-spacing: 0.14em;
+
+  --container-site: 1120px;
+  --container-prose: 720px;
 }
 
-html {
-  font-size: 18px;
-  line-height: 32px;
+@theme inline {
+  --font-sans: var(--font-figtree), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-zilla-slab), Georgia, 'Times New Roman', serif;
+  --font-display: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
 
-  background: rgb(0, 0, 0);
-  -webkit-font-smoothing: antialiased;
+  --color-wheat: var(--wheat-gold);
+  --color-wheat-50: var(--wheat-50);
+  --color-wheat-100: var(--wheat-100);
+  --color-wheat-300: var(--wheat-300);
+  --color-wheat-500: var(--wheat-500);
+  --color-wheat-600: var(--wheat-600);
+  --color-wheat-700: var(--wheat-700);
+  --color-umber: var(--shepherd-umber);
+  --color-umber-50: var(--umber-50);
+  --color-umber-100: var(--umber-100);
+  --color-umber-200: var(--umber-200);
+  --color-umber-400: var(--umber-400);
+  --color-umber-600: var(--umber-600);
+  --color-umber-800: var(--umber-800);
+  --color-umber-900: var(--umber-900);
+  --color-umber-950: var(--umber-950);
+  --color-seal: var(--wax-seal);
+  --color-seal-50: var(--seal-50);
+  --color-seal-100: var(--seal-100);
+  --color-seal-400: var(--seal-400);
+  --color-seal-600: var(--seal-600);
+  --color-seal-700: var(--seal-700);
+  --color-seal-900: var(--seal-900);
+  --color-marian: var(--marian-blue);
+  --color-marian-50: var(--marian-50);
+  --color-marian-100: var(--marian-100);
+  --color-marian-300: var(--marian-300);
+  --color-marian-600: var(--marian-600);
+  --color-marian-700: var(--marian-700);
+  --color-marian-900: var(--marian-900);
+
+  --color-brand: var(--brand);
+  --color-brand-deep: var(--brand-deep);
+  --color-brand-foreground: var(--brand-foreground);
+
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-html,
-body,
-#app {
-  height: 100%;
-}
-
-body {
-  font-family: system-ui;
-  font-size: 18px;
-  line-height: 32px;
-
-  margin: 0;
-  color: rgb(1000, 1000, 1000);
-
-  @media (max-width: 1024px) {
-    font-size: 15px;
-    line-height: 24px;
+/* Rich text: brand colors, 14px base, links without underline */
+@utility prose-brand {
+  --tw-prose-body: var(--foreground);
+  --tw-prose-headings: var(--foreground);
+  --tw-prose-bold: var(--foreground);
+  --tw-prose-links: var(--foreground);
+  --tw-prose-quotes: var(--foreground);
+  --tw-prose-quote-borders: var(--seal-600);
+  --tw-prose-bullets: var(--umber-400);
+  --tw-prose-counters: var(--muted-foreground);
+  --tw-prose-hr: var(--border);
+  --tw-prose-captions: var(--muted-foreground);
+  --tw-prose-invert-body: rgb(255 255 255 / 0.85);
+  --tw-prose-invert-headings: white;
+  --tw-prose-invert-bold: white;
+  --tw-prose-invert-links: white;
+  --tw-prose-invert-quotes: white;
+  --tw-prose-invert-bullets: rgb(255 255 255 / 0.5);
+  --tw-prose-invert-counters: rgb(255 255 255 / 0.6);
+  --tw-prose-invert-hr: rgb(255 255 255 / 0.15);
+  font-size: var(--text-sm);
+  & :where(a) {
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 150ms;
+  }
+  & :where(a):hover {
+    color: var(--seal-700);
+  }
+  & :where(h1, h2, h3, h4) {
+    font-family: var(--font-heading);
+    font-weight: 600;
   }
 }
 
-img {
-  max-width: 100%;
-  height: auto;
-  display: block;
-}
-
-h1 {
-  margin: 40px 0;
-  font-size: 64px;
-  line-height: 70px;
-  font-weight: bold;
-
-  @media (max-width: 1024px) {
-    margin: 24px 0;
-    font-size: 42px;
-    line-height: 42px;
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
   }
-
-  @media (max-width: 768px) {
-    font-size: 38px;
-    line-height: 38px;
+  html {
+    @apply font-sans motion-safe:scroll-smooth;
+    scroll-padding-top: 4.5rem;
   }
-
-  @media (max-width: 400px) {
-    font-size: 32px;
-    line-height: 32px;
+  body {
+    @apply bg-background text-sm text-foreground antialiased;
   }
-}
-
-p {
-  margin: 24px 0;
-
-  @media (max-width: 1024px) {
-    margin: calc(var(--base) * 0.75) 0;
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-heading font-semibold text-balance;
   }
-}
-
-a {
-  color: currentColor;
-
-  &:focus {
-    opacity: 0.8;
-    outline: none;
+  p {
+    @apply text-pretty;
   }
-
-  &:active {
-    opacity: 0.7;
-    outline: none;
+  ::selection {
+    @apply bg-wheat-100 text-foreground;
   }
-}
-
-svg {
-  vertical-align: middle;
-}
-
-.home {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-  height: 100vh;
-  padding: 45px;
-  max-width: 1024px;
-  margin: 0 auto;
-  overflow: hidden;
-
-  @media (max-width: 400px) {
-    padding: 24px;
-  }
-
-  .content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    flex-grow: 1;
-
-    h1 {
-      text-align: center;
-    }
-  }
-
-  .links {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-
-    a {
-      text-decoration: none;
-      padding: 0.25rem 0.5rem;
-      border-radius: 4px;
-    }
-
-    .admin {
-      color: rgb(0, 0, 0);
-      background: rgb(1000, 1000, 1000);
-      border: 1px solid rgb(0, 0, 0);
-    }
-
-    .docs {
-      color: rgb(1000, 1000, 1000);
-      background: rgb(0, 0, 0);
-      border: 1px solid rgb(1000, 1000, 1000);
-    }
-  }
-
-  .footer {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-
-    @media (max-width: 1024px) {
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    p {
-      margin: 0;
-    }
-
-    .codeLink {
-      text-decoration: none;
-      padding: 0 0.5rem;
-      background: rgb(60, 60, 60);
-      border-radius: 4px;
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      transition-duration: 1ms !important;
+      animation-duration: 1ms !important;
     }
   }
 }

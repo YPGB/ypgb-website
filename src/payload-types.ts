@@ -67,8 +67,15 @@ export interface Config {
   };
   blocks: {};
   collections: {
-    users: User;
+    pages: Page;
+    news: News;
+    'news-categories': NewsCategory;
+    units: Unit;
+    pengurus: Pengurus;
     media: Media;
+    users: User;
+    forms: Form;
+    'form-submissions': FormSubmission;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -76,19 +83,32 @@ export interface Config {
   };
   collectionsJoins: {};
   collectionsSelect: {
-    users: UsersSelect<false> | UsersSelect<true>;
+    pages: PagesSelect<false> | PagesSelect<true>;
+    news: NewsSelect<false> | NewsSelect<true>;
+    'news-categories': NewsCategoriesSelect<false> | NewsCategoriesSelect<true>;
+    units: UnitsSelect<false> | UnitsSelect<true>;
+    pengurus: PengurusSelect<false> | PengurusSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    users: UsersSelect<false> | UsersSelect<true>;
+    forms: FormsSelect<false> | FormsSelect<true>;
+    'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
   };
   db: {
-    defaultIDType: string;
+    defaultIDType: number;
   };
   fallbackLocale: null;
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    'site-settings': SiteSetting;
+    navigation: Navigation;
+  };
+  globalsSelect: {
+    'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
+    navigation: NavigationSelect<false> | NavigationSelect<true>;
+  };
   locale: null;
   widgets: {
     collections: CollectionsWidget;
@@ -118,11 +138,842 @@ export interface UserAuthOperations {
   };
 }
 /**
+ * The page with slug "home" is the homepage.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pages".
+ */
+export interface Page {
+  id: number;
+  title: string;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  hero: {
+    type: 'none' | 'split' | 'centeredFull' | 'centered' | 'compact' | 'minimal';
+    background?: ('brand' | 'brandDeep' | 'warm') | null;
+    /**
+     * Optional photo behind the text. A fixed dark overlay keeps the text readable.
+     */
+    backgroundImage?: (number | null) | Media;
+    overline?: string | null;
+    title: string;
+    lead?: string | null;
+    showBreadcrumb?: boolean | null;
+    links?:
+      | {
+          link: {
+            type?: ('page' | 'external') | null;
+            newTab?: boolean | null;
+            label: string;
+            page?: (number | null) | Page;
+            /**
+             * Section anchor ID (optional)
+             */
+            anchor?: string | null;
+            url?: string | null;
+            appearance?: ('primary' | 'secondary' | 'accent' | 'link') | null;
+          };
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * One image shows as a picture; two or more become a carousel.
+     */
+    media?: (number | Media)[] | null;
+    mediaPosition?: ('left' | 'right') | null;
+  };
+  layout?:
+    | (
+        | {
+            section: {
+              /**
+               * Lowercase letters, numbers and dashes. Used by menu links (/#unit).
+               */
+              anchorId?: string | null;
+              background: 'page' | 'warm' | 'brand' | 'brandDeep';
+              heading?: {
+                overline?: string | null;
+                title?: string | null;
+                subtitle?: string | null;
+                align?: ('left' | 'center') | null;
+                hasAction?: boolean | null;
+                action?: {
+                  type?: ('page' | 'external') | null;
+                  newTab?: boolean | null;
+                  label: string;
+                  page?: (number | null) | Page;
+                  /**
+                   * Section anchor ID (optional)
+                   */
+                  anchor?: string | null;
+                  url?: string | null;
+                };
+              };
+            };
+            content: {
+              root: {
+                type: string;
+                children: {
+                  type: any;
+                  version: number;
+                  [k: string]: unknown;
+                }[];
+                direction: ('ltr' | 'rtl') | null;
+                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                indent: number;
+                version: number;
+              };
+              [k: string]: unknown;
+            };
+            layout?: ('single' | 'twoColumns') | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'richText';
+          }
+        | {
+            section: {
+              /**
+               * Lowercase letters, numbers and dashes. Used by menu links (/#unit).
+               */
+              anchorId?: string | null;
+              background: 'page' | 'warm' | 'brand' | 'brandDeep';
+              heading?: {
+                overline?: string | null;
+                title?: string | null;
+                subtitle?: string | null;
+                align?: ('left' | 'center') | null;
+                hasAction?: boolean | null;
+                action?: {
+                  type?: ('page' | 'external') | null;
+                  newTab?: boolean | null;
+                  label: string;
+                  page?: (number | null) | Page;
+                  /**
+                   * Section anchor ID (optional)
+                   */
+                  anchor?: string | null;
+                  url?: string | null;
+                };
+              };
+            };
+            tabs: {
+              label: string;
+              content: {
+                root: {
+                  type: string;
+                  children: {
+                    type: any;
+                    version: number;
+                    [k: string]: unknown;
+                  }[];
+                  direction: ('ltr' | 'rtl') | null;
+                  format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                  indent: number;
+                  version: number;
+                };
+                [k: string]: unknown;
+              };
+              id?: string | null;
+            }[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'tabs';
+          }
+        | {
+            section: {
+              /**
+               * Lowercase letters, numbers and dashes. Used by menu links (/#unit).
+               */
+              anchorId?: string | null;
+              background: 'page' | 'warm' | 'brand' | 'brandDeep';
+              heading?: {
+                overline?: string | null;
+                title?: string | null;
+                subtitle?: string | null;
+                align?: ('left' | 'center') | null;
+                hasAction?: boolean | null;
+                action?: {
+                  type?: ('page' | 'external') | null;
+                  newTab?: boolean | null;
+                  label: string;
+                  page?: (number | null) | Page;
+                  /**
+                   * Section anchor ID (optional)
+                   */
+                  anchor?: string | null;
+                  url?: string | null;
+                };
+              };
+            };
+            media: number | Media;
+            mediaPosition?: ('left' | 'right') | null;
+            content: {
+              root: {
+                type: string;
+                children: {
+                  type: any;
+                  version: number;
+                  [k: string]: unknown;
+                }[];
+                direction: ('ltr' | 'rtl') | null;
+                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                indent: number;
+                version: number;
+              };
+              [k: string]: unknown;
+            };
+            links?:
+              | {
+                  link: {
+                    type?: ('page' | 'external') | null;
+                    newTab?: boolean | null;
+                    label: string;
+                    page?: (number | null) | Page;
+                    /**
+                     * Section anchor ID (optional)
+                     */
+                    anchor?: string | null;
+                    url?: string | null;
+                    appearance?: ('primary' | 'secondary' | 'accent' | 'link') | null;
+                  };
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'mediaText';
+          }
+        | {
+            section: {
+              /**
+               * Lowercase letters, numbers and dashes. Used by menu links (/#unit).
+               */
+              anchorId?: string | null;
+              background: 'page' | 'warm' | 'brand' | 'brandDeep';
+              heading?: {
+                overline?: string | null;
+                title?: string | null;
+                subtitle?: string | null;
+                align?: ('left' | 'center') | null;
+                hasAction?: boolean | null;
+                action?: {
+                  type?: ('page' | 'external') | null;
+                  newTab?: boolean | null;
+                  label: string;
+                  page?: (number | null) | Page;
+                  /**
+                   * Section anchor ID (optional)
+                   */
+                  anchor?: string | null;
+                  url?: string | null;
+                };
+              };
+            };
+            columns: '2' | '3' | '4';
+            cards: {
+              icon?:
+                | (
+                    | 'graduation-cap'
+                    | 'school'
+                    | 'book-open-text'
+                    | 'library'
+                    | 'users'
+                    | 'user-round'
+                    | 'baby'
+                    | 'heart-handshake'
+                    | 'hand-heart'
+                    | 'church'
+                    | 'award'
+                    | 'trophy'
+                    | 'star'
+                    | 'sparkles'
+                    | 'lightbulb'
+                    | 'target'
+                    | 'eye'
+                    | 'calendar-days'
+                    | 'clock'
+                    | 'newspaper'
+                    | 'map-pin'
+                    | 'phone'
+                    | 'mail'
+                  )
+                | null;
+              title: string;
+              text?: string | null;
+              hasLink?: boolean | null;
+              link?: {
+                type?: ('page' | 'external') | null;
+                newTab?: boolean | null;
+                label: string;
+                page?: (number | null) | Page;
+                /**
+                 * Section anchor ID (optional)
+                 */
+                anchor?: string | null;
+                url?: string | null;
+              };
+              id?: string | null;
+            }[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'cardGrid';
+          }
+        | {
+            section: {
+              /**
+               * Lowercase letters, numbers and dashes. Used by menu links (/#unit).
+               */
+              anchorId?: string | null;
+              background: 'page' | 'warm' | 'brand' | 'brandDeep';
+              heading?: {
+                overline?: string | null;
+                title?: string | null;
+                subtitle?: string | null;
+                align?: ('left' | 'center') | null;
+                hasAction?: boolean | null;
+                action?: {
+                  type?: ('page' | 'external') | null;
+                  newTab?: boolean | null;
+                  label: string;
+                  page?: (number | null) | Page;
+                  /**
+                   * Section anchor ID (optional)
+                   */
+                  anchor?: string | null;
+                  url?: string | null;
+                };
+              };
+            };
+            icon?:
+              | (
+                  | 'graduation-cap'
+                  | 'school'
+                  | 'book-open-text'
+                  | 'library'
+                  | 'users'
+                  | 'user-round'
+                  | 'baby'
+                  | 'heart-handshake'
+                  | 'hand-heart'
+                  | 'church'
+                  | 'award'
+                  | 'trophy'
+                  | 'star'
+                  | 'sparkles'
+                  | 'lightbulb'
+                  | 'target'
+                  | 'eye'
+                  | 'calendar-days'
+                  | 'clock'
+                  | 'newspaper'
+                  | 'map-pin'
+                  | 'phone'
+                  | 'mail'
+                )
+              | null;
+            title: string;
+            text?: string | null;
+            links?:
+              | {
+                  link: {
+                    type?: ('page' | 'external') | null;
+                    newTab?: boolean | null;
+                    label: string;
+                    page?: (number | null) | Page;
+                    /**
+                     * Section anchor ID (optional)
+                     */
+                    anchor?: string | null;
+                    url?: string | null;
+                    appearance?: ('primary' | 'secondary' | 'accent' | 'link') | null;
+                  };
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'cta';
+          }
+        | {
+            section: {
+              /**
+               * Lowercase letters, numbers and dashes. Used by menu links (/#unit).
+               */
+              anchorId?: string | null;
+              background: 'page' | 'warm' | 'brand' | 'brandDeep';
+              heading?: {
+                overline?: string | null;
+                title?: string | null;
+                subtitle?: string | null;
+                align?: ('left' | 'center') | null;
+                hasAction?: boolean | null;
+                action?: {
+                  type?: ('page' | 'external') | null;
+                  newTab?: boolean | null;
+                  label: string;
+                  page?: (number | null) | Page;
+                  /**
+                   * Section anchor ID (optional)
+                   */
+                  anchor?: string | null;
+                  url?: string | null;
+                };
+              };
+            };
+            mode?: ('all' | 'selected') | null;
+            columns: '3' | '4';
+            /**
+             * Leave empty to show every level.
+             */
+            level?: ('TK' | 'SD' | 'SMP' | 'SMA')[] | null;
+            units?: (number | Unit)[] | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'unitList';
+          }
+        | {
+            section: {
+              /**
+               * Lowercase letters, numbers and dashes. Used by menu links (/#unit).
+               */
+              anchorId?: string | null;
+              background: 'page' | 'warm' | 'brand' | 'brandDeep';
+              heading?: {
+                overline?: string | null;
+                title?: string | null;
+                subtitle?: string | null;
+                align?: ('left' | 'center') | null;
+                hasAction?: boolean | null;
+                action?: {
+                  type?: ('page' | 'external') | null;
+                  newTab?: boolean | null;
+                  label: string;
+                  page?: (number | null) | Page;
+                  /**
+                   * Section anchor ID (optional)
+                   */
+                  anchor?: string | null;
+                  url?: string | null;
+                };
+              };
+            };
+            mode?: ('latest' | 'selected') | null;
+            layout?: ('grid' | 'list') | null;
+            limit?: number | null;
+            /**
+             * Leave empty for all categories.
+             */
+            categories?: (number | NewsCategory)[] | null;
+            items?: (number | News)[] | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'newsList';
+          }
+        | {
+            section: {
+              /**
+               * Lowercase letters, numbers and dashes. Used by menu links (/#unit).
+               */
+              anchorId?: string | null;
+              background: 'page' | 'warm' | 'brand' | 'brandDeep';
+              heading?: {
+                overline?: string | null;
+                title?: string | null;
+                subtitle?: string | null;
+                align?: ('left' | 'center') | null;
+                hasAction?: boolean | null;
+                action?: {
+                  type?: ('page' | 'external') | null;
+                  newTab?: boolean | null;
+                  label: string;
+                  page?: (number | null) | Page;
+                  /**
+                   * Section anchor ID (optional)
+                   */
+                  anchor?: string | null;
+                  url?: string | null;
+                };
+              };
+            };
+            /**
+             * Leave empty to show all active members.
+             */
+            organ?: ('pembina' | 'pengurus' | 'pengawas')[] | null;
+            groupByOrgan?: boolean | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'pengurusList';
+          }
+        | {
+            section: {
+              /**
+               * Lowercase letters, numbers and dashes. Used by menu links (/#unit).
+               */
+              anchorId?: string | null;
+              background: 'page' | 'warm' | 'brand' | 'brandDeep';
+              heading?: {
+                overline?: string | null;
+                title?: string | null;
+                subtitle?: string | null;
+                align?: ('left' | 'center') | null;
+                hasAction?: boolean | null;
+                action?: {
+                  type?: ('page' | 'external') | null;
+                  newTab?: boolean | null;
+                  label: string;
+                  page?: (number | null) | Page;
+                  /**
+                   * Section anchor ID (optional)
+                   */
+                  anchor?: string | null;
+                  url?: string | null;
+                };
+              };
+            };
+            showDetails?: boolean | null;
+            form?: (number | null) | Form;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'contact';
+          }
+      )[]
+    | null;
+  meta?: {
+    title?: string | null;
+    description?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (number | null) | Media;
+  };
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media".
+ */
+export interface Media {
+  id: number;
+  /**
+   * Describe the image in Bahasa Indonesia, e.g. "Siswa SD mengikuti upacara".
+   */
+  alt: string;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+  sizes?: {
+    thumbnail?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    card?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    large?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+  };
+}
+/**
+ * Drag rows to set the display order.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "units".
+ */
+export interface Unit {
+  id: number;
+  _order?: string | null;
+  abbreviation: string;
+  name: string;
+  level: 'TK' | 'SD' | 'SMP' | 'SMA';
+  photo?: (number | null) | Media;
+  address?: string | null;
+  principal?: string | null;
+  accreditation?: string | null;
+  phone?: string | null;
+  email?: string | null;
+  website?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "news-categories".
+ */
+export interface NewsCategory {
+  id: number;
+  title: string;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "news".
+ */
+export interface News {
+  id: number;
+  title: string;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  publishedAt: string;
+  category?: (number | null) | NewsCategory;
+  author: string;
+  coverImage?: (number | null) | Media;
+  /**
+   * One or two sentences shown on news cards.
+   */
+  excerpt?: string | null;
+  content: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  meta?: {
+    title?: string | null;
+    description?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (number | null) | Media;
+  };
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "forms".
+ */
+export interface Form {
+  id: number;
+  title: string;
+  fields?:
+    | (
+        | {
+            name: string;
+            label?: string | null;
+            width?: number | null;
+            required?: boolean | null;
+            defaultValue?: boolean | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'checkbox';
+          }
+        | {
+            name: string;
+            label?: string | null;
+            width?: number | null;
+            required?: boolean | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'email';
+          }
+        | {
+            message?: {
+              root: {
+                type: string;
+                children: {
+                  type: any;
+                  version: number;
+                  [k: string]: unknown;
+                }[];
+                direction: ('ltr' | 'rtl') | null;
+                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                indent: number;
+                version: number;
+              };
+              [k: string]: unknown;
+            } | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'message';
+          }
+        | {
+            name: string;
+            label?: string | null;
+            width?: number | null;
+            defaultValue?: string | null;
+            placeholder?: string | null;
+            options?:
+              | {
+                  label: string;
+                  value: string;
+                  id?: string | null;
+                }[]
+              | null;
+            required?: boolean | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'select';
+          }
+        | {
+            name: string;
+            label?: string | null;
+            width?: number | null;
+            defaultValue?: string | null;
+            required?: boolean | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'text';
+          }
+        | {
+            name: string;
+            label?: string | null;
+            width?: number | null;
+            defaultValue?: string | null;
+            required?: boolean | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'textarea';
+          }
+        | {
+            name: string;
+            label?: string | null;
+            width?: number | null;
+            required?: boolean | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'phone';
+          }
+      )[]
+    | null;
+  submitButtonLabel?: string | null;
+  confirmationType?: ('message' | 'redirect') | null;
+  confirmationMessage?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  redirect?: {
+    type?: ('reference' | 'custom') | null;
+    reference?: {
+      relationTo: 'pages';
+      value: number | Page;
+    } | null;
+    url?: string | null;
+  };
+  emails?:
+    | {
+        emailTo?: string | null;
+        cc?: string | null;
+        bcc?: string | null;
+        replyTo?: string | null;
+        emailFrom?: string | null;
+        subject: string;
+        message?: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        } | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Drag rows to set the display order.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pengurus".
+ */
+export interface Pengurus {
+  id: number;
+  _order?: string | null;
+  titlePrefix?: string | null;
+  name: string;
+  titleSuffix?: string | null;
+  position: string;
+  organ: 'pembina' | 'pengurus' | 'pengawas';
+  term?: string | null;
+  photo?: (number | null) | Media;
+  /**
+   * Optional. Shown in a dialog when the card is clicked.
+   */
+  bio?: string | null;
+  /**
+   * Inactive members are kept on record but not shown.
+   */
+  active?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
  */
 export interface User {
-  id: string;
+  id: number;
+  name?: string | null;
+  /**
+   * Admin: everything. Editor: pages, news, units, pengurus and media.
+   */
+  role: 'admin' | 'editor';
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -130,6 +981,7 @@ export interface User {
   resetPasswordExpiration?: string | null;
   salt?: string | null;
   hash?: string | null;
+  resetPasswordRequestedAt?: string | null;
   loginAttempts?: number | null;
   lockUntil?: string | null;
   sessions?:
@@ -144,29 +996,27 @@ export interface User {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "media".
+ * via the `definition` "form-submissions".
  */
-export interface Media {
-  id: string;
-  alt: string;
+export interface FormSubmission {
+  id: number;
+  form: number | Form;
+  submissionData?:
+    | {
+        field: string;
+        value: string;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt: string;
   createdAt: string;
-  url?: string | null;
-  thumbnailURL?: string | null;
-  filename?: string | null;
-  mimeType?: string | null;
-  filesize?: number | null;
-  width?: number | null;
-  height?: number | null;
-  focalX?: number | null;
-  focalY?: number | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
-  id: string;
+  id: number;
   key: string;
   data:
     | {
@@ -183,20 +1033,48 @@ export interface PayloadKv {
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
-  id: string;
+  id: number;
   document?:
     | ({
-        relationTo: 'users';
-        value: string | User;
+        relationTo: 'pages';
+        value: number | Page;
+      } | null)
+    | ({
+        relationTo: 'news';
+        value: number | News;
+      } | null)
+    | ({
+        relationTo: 'news-categories';
+        value: number | NewsCategory;
+      } | null)
+    | ({
+        relationTo: 'units';
+        value: number | Unit;
+      } | null)
+    | ({
+        relationTo: 'pengurus';
+        value: number | Pengurus;
       } | null)
     | ({
         relationTo: 'media';
-        value: string | Media;
+        value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'users';
+        value: number | User;
+      } | null)
+    | ({
+        relationTo: 'forms';
+        value: number | Form;
+      } | null)
+    | ({
+        relationTo: 'form-submissions';
+        value: number | FormSubmission;
       } | null);
   globalSlug?: string | null;
   user: {
     relationTo: 'users';
-    value: string | User;
+    value: number | User;
   };
   updatedAt: string;
   createdAt: string;
@@ -206,10 +1084,10 @@ export interface PayloadLockedDocument {
  * via the `definition` "payload-preferences".
  */
 export interface PayloadPreference {
-  id: string;
+  id: number;
   user: {
     relationTo: 'users';
-    value: string | User;
+    value: number | User;
   };
   key?: string | null;
   value?:
@@ -229,7 +1107,7 @@ export interface PayloadPreference {
  * via the `definition` "payload-migrations".
  */
 export interface PayloadMigration {
-  id: string;
+  id: number;
   name?: string | null;
   batch?: number | null;
   updatedAt: string;
@@ -237,25 +1115,487 @@ export interface PayloadMigration {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "users_select".
+ * via the `definition` "pages_select".
  */
-export interface UsersSelect<T extends boolean = true> {
-  updatedAt?: T;
-  createdAt?: T;
-  email?: T;
-  resetPasswordToken?: T;
-  resetPasswordExpiration?: T;
-  salt?: T;
-  hash?: T;
-  loginAttempts?: T;
-  lockUntil?: T;
-  sessions?:
+export interface PagesSelect<T extends boolean = true> {
+  title?: T;
+  generateSlug?: T;
+  slug?: T;
+  hero?:
     | T
     | {
-        id?: T;
-        createdAt?: T;
-        expiresAt?: T;
+        type?: T;
+        background?: T;
+        backgroundImage?: T;
+        overline?: T;
+        title?: T;
+        lead?: T;
+        showBreadcrumb?: T;
+        links?:
+          | T
+          | {
+              link?:
+                | T
+                | {
+                    type?: T;
+                    newTab?: T;
+                    label?: T;
+                    page?: T;
+                    anchor?: T;
+                    url?: T;
+                    appearance?: T;
+                  };
+              id?: T;
+            };
+        media?: T;
+        mediaPosition?: T;
       };
+  layout?:
+    | T
+    | {
+        richText?:
+          | T
+          | {
+              section?:
+                | T
+                | {
+                    anchorId?: T;
+                    background?: T;
+                    heading?:
+                      | T
+                      | {
+                          overline?: T;
+                          title?: T;
+                          subtitle?: T;
+                          align?: T;
+                          hasAction?: T;
+                          action?:
+                            | T
+                            | {
+                                type?: T;
+                                newTab?: T;
+                                label?: T;
+                                page?: T;
+                                anchor?: T;
+                                url?: T;
+                              };
+                        };
+                  };
+              content?: T;
+              layout?: T;
+              id?: T;
+              blockName?: T;
+            };
+        tabs?:
+          | T
+          | {
+              section?:
+                | T
+                | {
+                    anchorId?: T;
+                    background?: T;
+                    heading?:
+                      | T
+                      | {
+                          overline?: T;
+                          title?: T;
+                          subtitle?: T;
+                          align?: T;
+                          hasAction?: T;
+                          action?:
+                            | T
+                            | {
+                                type?: T;
+                                newTab?: T;
+                                label?: T;
+                                page?: T;
+                                anchor?: T;
+                                url?: T;
+                              };
+                        };
+                  };
+              tabs?:
+                | T
+                | {
+                    label?: T;
+                    content?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        mediaText?:
+          | T
+          | {
+              section?:
+                | T
+                | {
+                    anchorId?: T;
+                    background?: T;
+                    heading?:
+                      | T
+                      | {
+                          overline?: T;
+                          title?: T;
+                          subtitle?: T;
+                          align?: T;
+                          hasAction?: T;
+                          action?:
+                            | T
+                            | {
+                                type?: T;
+                                newTab?: T;
+                                label?: T;
+                                page?: T;
+                                anchor?: T;
+                                url?: T;
+                              };
+                        };
+                  };
+              media?: T;
+              mediaPosition?: T;
+              content?: T;
+              links?:
+                | T
+                | {
+                    link?:
+                      | T
+                      | {
+                          type?: T;
+                          newTab?: T;
+                          label?: T;
+                          page?: T;
+                          anchor?: T;
+                          url?: T;
+                          appearance?: T;
+                        };
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        cardGrid?:
+          | T
+          | {
+              section?:
+                | T
+                | {
+                    anchorId?: T;
+                    background?: T;
+                    heading?:
+                      | T
+                      | {
+                          overline?: T;
+                          title?: T;
+                          subtitle?: T;
+                          align?: T;
+                          hasAction?: T;
+                          action?:
+                            | T
+                            | {
+                                type?: T;
+                                newTab?: T;
+                                label?: T;
+                                page?: T;
+                                anchor?: T;
+                                url?: T;
+                              };
+                        };
+                  };
+              columns?: T;
+              cards?:
+                | T
+                | {
+                    icon?: T;
+                    title?: T;
+                    text?: T;
+                    hasLink?: T;
+                    link?:
+                      | T
+                      | {
+                          type?: T;
+                          newTab?: T;
+                          label?: T;
+                          page?: T;
+                          anchor?: T;
+                          url?: T;
+                        };
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        cta?:
+          | T
+          | {
+              section?:
+                | T
+                | {
+                    anchorId?: T;
+                    background?: T;
+                    heading?:
+                      | T
+                      | {
+                          overline?: T;
+                          title?: T;
+                          subtitle?: T;
+                          align?: T;
+                          hasAction?: T;
+                          action?:
+                            | T
+                            | {
+                                type?: T;
+                                newTab?: T;
+                                label?: T;
+                                page?: T;
+                                anchor?: T;
+                                url?: T;
+                              };
+                        };
+                  };
+              icon?: T;
+              title?: T;
+              text?: T;
+              links?:
+                | T
+                | {
+                    link?:
+                      | T
+                      | {
+                          type?: T;
+                          newTab?: T;
+                          label?: T;
+                          page?: T;
+                          anchor?: T;
+                          url?: T;
+                          appearance?: T;
+                        };
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        unitList?:
+          | T
+          | {
+              section?:
+                | T
+                | {
+                    anchorId?: T;
+                    background?: T;
+                    heading?:
+                      | T
+                      | {
+                          overline?: T;
+                          title?: T;
+                          subtitle?: T;
+                          align?: T;
+                          hasAction?: T;
+                          action?:
+                            | T
+                            | {
+                                type?: T;
+                                newTab?: T;
+                                label?: T;
+                                page?: T;
+                                anchor?: T;
+                                url?: T;
+                              };
+                        };
+                  };
+              mode?: T;
+              columns?: T;
+              level?: T;
+              units?: T;
+              id?: T;
+              blockName?: T;
+            };
+        newsList?:
+          | T
+          | {
+              section?:
+                | T
+                | {
+                    anchorId?: T;
+                    background?: T;
+                    heading?:
+                      | T
+                      | {
+                          overline?: T;
+                          title?: T;
+                          subtitle?: T;
+                          align?: T;
+                          hasAction?: T;
+                          action?:
+                            | T
+                            | {
+                                type?: T;
+                                newTab?: T;
+                                label?: T;
+                                page?: T;
+                                anchor?: T;
+                                url?: T;
+                              };
+                        };
+                  };
+              mode?: T;
+              layout?: T;
+              limit?: T;
+              categories?: T;
+              items?: T;
+              id?: T;
+              blockName?: T;
+            };
+        pengurusList?:
+          | T
+          | {
+              section?:
+                | T
+                | {
+                    anchorId?: T;
+                    background?: T;
+                    heading?:
+                      | T
+                      | {
+                          overline?: T;
+                          title?: T;
+                          subtitle?: T;
+                          align?: T;
+                          hasAction?: T;
+                          action?:
+                            | T
+                            | {
+                                type?: T;
+                                newTab?: T;
+                                label?: T;
+                                page?: T;
+                                anchor?: T;
+                                url?: T;
+                              };
+                        };
+                  };
+              organ?: T;
+              groupByOrgan?: T;
+              id?: T;
+              blockName?: T;
+            };
+        contact?:
+          | T
+          | {
+              section?:
+                | T
+                | {
+                    anchorId?: T;
+                    background?: T;
+                    heading?:
+                      | T
+                      | {
+                          overline?: T;
+                          title?: T;
+                          subtitle?: T;
+                          align?: T;
+                          hasAction?: T;
+                          action?:
+                            | T
+                            | {
+                                type?: T;
+                                newTab?: T;
+                                label?: T;
+                                page?: T;
+                                anchor?: T;
+                                url?: T;
+                              };
+                        };
+                  };
+              showDetails?: T;
+              form?: T;
+              id?: T;
+              blockName?: T;
+            };
+      };
+  meta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "news_select".
+ */
+export interface NewsSelect<T extends boolean = true> {
+  title?: T;
+  generateSlug?: T;
+  slug?: T;
+  publishedAt?: T;
+  category?: T;
+  author?: T;
+  coverImage?: T;
+  excerpt?: T;
+  content?: T;
+  meta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "news-categories_select".
+ */
+export interface NewsCategoriesSelect<T extends boolean = true> {
+  title?: T;
+  generateSlug?: T;
+  slug?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "units_select".
+ */
+export interface UnitsSelect<T extends boolean = true> {
+  _order?: T;
+  abbreviation?: T;
+  name?: T;
+  level?: T;
+  photo?: T;
+  address?: T;
+  principal?: T;
+  accreditation?: T;
+  phone?: T;
+  email?: T;
+  website?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pengurus_select".
+ */
+export interface PengurusSelect<T extends boolean = true> {
+  _order?: T;
+  titlePrefix?: T;
+  name?: T;
+  titleSuffix?: T;
+  position?: T;
+  organ?: T;
+  term?: T;
+  photo?: T;
+  bio?: T;
+  active?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -274,6 +1614,195 @@ export interface MediaSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
+  sizes?:
+    | T
+    | {
+        thumbnail?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        card?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        large?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+      };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "users_select".
+ */
+export interface UsersSelect<T extends boolean = true> {
+  name?: T;
+  role?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  email?: T;
+  resetPasswordToken?: T;
+  resetPasswordExpiration?: T;
+  salt?: T;
+  hash?: T;
+  resetPasswordRequestedAt?: T;
+  loginAttempts?: T;
+  lockUntil?: T;
+  sessions?:
+    | T
+    | {
+        id?: T;
+        createdAt?: T;
+        expiresAt?: T;
+      };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "forms_select".
+ */
+export interface FormsSelect<T extends boolean = true> {
+  title?: T;
+  fields?:
+    | T
+    | {
+        checkbox?:
+          | T
+          | {
+              name?: T;
+              label?: T;
+              width?: T;
+              required?: T;
+              defaultValue?: T;
+              id?: T;
+              blockName?: T;
+            };
+        email?:
+          | T
+          | {
+              name?: T;
+              label?: T;
+              width?: T;
+              required?: T;
+              id?: T;
+              blockName?: T;
+            };
+        message?:
+          | T
+          | {
+              message?: T;
+              id?: T;
+              blockName?: T;
+            };
+        select?:
+          | T
+          | {
+              name?: T;
+              label?: T;
+              width?: T;
+              defaultValue?: T;
+              placeholder?: T;
+              options?:
+                | T
+                | {
+                    label?: T;
+                    value?: T;
+                    id?: T;
+                  };
+              required?: T;
+              id?: T;
+              blockName?: T;
+            };
+        text?:
+          | T
+          | {
+              name?: T;
+              label?: T;
+              width?: T;
+              defaultValue?: T;
+              required?: T;
+              id?: T;
+              blockName?: T;
+            };
+        textarea?:
+          | T
+          | {
+              name?: T;
+              label?: T;
+              width?: T;
+              defaultValue?: T;
+              required?: T;
+              id?: T;
+              blockName?: T;
+            };
+        phone?:
+          | T
+          | {
+              name?: T;
+              label?: T;
+              width?: T;
+              required?: T;
+              id?: T;
+              blockName?: T;
+            };
+      };
+  submitButtonLabel?: T;
+  confirmationType?: T;
+  confirmationMessage?: T;
+  redirect?:
+    | T
+    | {
+        type?: T;
+        reference?: T;
+        url?: T;
+      };
+  emails?:
+    | T
+    | {
+        emailTo?: T;
+        cc?: T;
+        bcc?: T;
+        replyTo?: T;
+        emailFrom?: T;
+        subject?: T;
+        message?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "form-submissions_select".
+ */
+export interface FormSubmissionsSelect<T extends boolean = true> {
+  form?: T;
+  submissionData?:
+    | T
+    | {
+        field?: T;
+        value?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -314,6 +1843,244 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings".
+ */
+export interface SiteSetting {
+  id: number;
+  /**
+   * Full official name. Used in page titles and the footer.
+   */
+  name: string;
+  /**
+   * Small line above the wordmark.
+   */
+  kicker?: string | null;
+  /**
+   * Short name shown next to the logo.
+   */
+  wordmark: string;
+  /**
+   * Optional line under the wordmark.
+   */
+  place?: string | null;
+  /**
+   * Main logo, for light backgrounds. Falls back to the built-in seal.
+   */
+  logo?: (number | null) | Media;
+  /**
+   * Optional variant for dark backgrounds (header/footer).
+   */
+  logoOnDark?: (number | null) | Media;
+  /**
+   * Square PNG or SVG, at least 512×512.
+   */
+  favicon?: (number | null) | Media;
+  /**
+   * One or two sentences about the foundation. Used for search engines and the footer.
+   */
+  description?: string | null;
+  motto?: string | null;
+  foundedYear?: number | null;
+  address?: string | null;
+  /**
+   * Google Maps link to the address.
+   */
+  mapUrl?: string | null;
+  email?: string | null;
+  /**
+   * Number in international format, e.g. 6281234567890.
+   */
+  whatsapp?: string | null;
+  phones?:
+    | {
+        label?: string | null;
+        number: string;
+        id?: string | null;
+      }[]
+    | null;
+  officeHours?:
+    | {
+        days: string;
+        hours: string;
+        id?: string | null;
+      }[]
+    | null;
+  socials?:
+    | {
+        platform: 'instagram' | 'facebook' | 'youtube' | 'tiktok' | 'x' | 'linkedin';
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "navigation".
+ */
+export interface Navigation {
+  id: number;
+  headerItems?:
+    | {
+        link: {
+          type?: ('page' | 'external') | null;
+          newTab?: boolean | null;
+          label: string;
+          page?: (number | null) | Page;
+          /**
+           * Section anchor ID (optional)
+           */
+          anchor?: string | null;
+          url?: string | null;
+        };
+        id?: string | null;
+      }[]
+    | null;
+  hasHeaderButton?: boolean | null;
+  headerButton?: {
+    type?: ('page' | 'external') | null;
+    newTab?: boolean | null;
+    label: string;
+    page?: (number | null) | Page;
+    /**
+     * Section anchor ID (optional)
+     */
+    anchor?: string | null;
+    url?: string | null;
+  };
+  footerColumns?:
+    | {
+        title: string;
+        links?:
+          | {
+              link: {
+                type?: ('page' | 'external') | null;
+                newTab?: boolean | null;
+                label: string;
+                page?: (number | null) | Page;
+                /**
+                 * Section anchor ID (optional)
+                 */
+                anchor?: string | null;
+                url?: string | null;
+              };
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Shown next to the copyright line, e.g. the city.
+   */
+  bottomText?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings_select".
+ */
+export interface SiteSettingsSelect<T extends boolean = true> {
+  name?: T;
+  kicker?: T;
+  wordmark?: T;
+  place?: T;
+  logo?: T;
+  logoOnDark?: T;
+  favicon?: T;
+  description?: T;
+  motto?: T;
+  foundedYear?: T;
+  address?: T;
+  mapUrl?: T;
+  email?: T;
+  whatsapp?: T;
+  phones?:
+    | T
+    | {
+        label?: T;
+        number?: T;
+        id?: T;
+      };
+  officeHours?:
+    | T
+    | {
+        days?: T;
+        hours?: T;
+        id?: T;
+      };
+  socials?:
+    | T
+    | {
+        platform?: T;
+        url?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "navigation_select".
+ */
+export interface NavigationSelect<T extends boolean = true> {
+  headerItems?:
+    | T
+    | {
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              label?: T;
+              page?: T;
+              anchor?: T;
+              url?: T;
+            };
+        id?: T;
+      };
+  hasHeaderButton?: T;
+  headerButton?:
+    | T
+    | {
+        type?: T;
+        newTab?: T;
+        label?: T;
+        page?: T;
+        anchor?: T;
+        url?: T;
+      };
+  footerColumns?:
+    | T
+    | {
+        title?: T;
+        links?:
+          | T
+          | {
+              link?:
+                | T
+                | {
+                    type?: T;
+                    newTab?: T;
+                    label?: T;
+                    page?: T;
+                    anchor?: T;
+                    url?: T;
+                  };
+              id?: T;
+            };
+        id?: T;
+      };
+  bottomText?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

@@ -1,18 +1,55 @@
+import type { Metadata } from 'next'
+import { Figtree, Geist, Zilla_Slab } from 'next/font/google'
+import { draftMode } from 'next/headers'
 import React from 'react'
+
+import { Footer } from '@/components/layout/Footer'
+import { Header } from '@/components/layout/Header'
+import { LivePreviewListener } from '@/components/layout/LivePreviewListener'
+import { FALLBACK_LOGO, getSiteSettings, mediaUrl } from '@/lib/site-settings'
+import { cn } from '@/lib/utils'
 import './styles.css'
 
-export const metadata = {
-  description: 'A blank template using Payload in a Next.js app.',
-  title: 'Payload Blank Template',
+const figtree = Figtree({ subsets: ['latin'], variable: '--font-figtree' })
+const zillaSlab = Zilla_Slab({
+  subsets: ['latin'],
+  weight: ['500', '600', '700'],
+  variable: '--font-zilla-slab',
+})
+const geist = Geist({ subsets: ['latin'], variable: '--font-geist' })
+
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSiteSettings()
+  const icon = mediaUrl(settings.favicon) ?? mediaUrl(settings.logo) ?? FALLBACK_LOGO
+  return {
+    metadataBase: new URL(process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'),
+    title: { default: settings.name, template: `%s | ${settings.name}` },
+    description: settings.description ?? undefined,
+    icons: { icon },
+    openGraph: { siteName: settings.name, locale: 'id_ID', type: 'website' },
+  }
 }
 
-export default async function RootLayout(props: { children: React.ReactNode }) {
-  const { children } = props
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const { isEnabled: draft } = await draftMode()
 
   return (
-    <html lang="en">
-      <body>
-        <main>{children}</main>
+    <html lang="id" className={cn(figtree.variable, zillaSlab.variable, geist.variable)}>
+      <body className="flex min-h-screen flex-col">
+        {draft && (
+          <>
+            <LivePreviewListener />
+            <div className="bg-seal-700 px-6 py-1.5 text-center text-xs text-white">
+              Mode pratinjau (draft) aktif ·{' '}
+              <a href="/next/exit-preview" className="font-semibold underline-offset-2 hover:underline">
+                Keluar
+              </a>
+            </div>
+          </>
+        )}
+        <Header />
+        <main className="flex-1">{children}</main>
+        <Footer />
       </body>
     </html>
   )
