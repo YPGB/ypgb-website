@@ -28,6 +28,18 @@ Brand rules come from the `gembala-baik-design` skill, adapted to shadcn. Theme 
 - **Logo:** `public/brand/logo.png` (512px web copy of the skill's `assets/logo.png`). Payload admin uses it via `src/components/admin/{Logo,Icon}.tsx`; admin styling otherwise stays Payload default.
 - Copy is formal Bahasa Indonesia; all content is placeholder until it comes from the CMS.
 
+### Design skills precedence
+
+Applies whenever `frontend-design` is loaded, whether invoked or auto-triggered.
+
+- `gembala-baik-design` + the overrides above are the brief. Tokens, fonts, overlines, card style, radius and shadows are decided; don't revisit them.
+- `frontend-design` may guide composition, hierarchy, hero choice and critique only, expressed through existing blocks/components and shadcn tokens.
+- **Copy:** structure only (heading/lead/CTA order, label length, empty states). Voice and wording stay with `gembala-baik-design`.
+- **Spacing:** existing scale and containers (`max-w-site`, `max-w-prose`). **Motion:** subtle, respects `prefers-reduced-motion`, proposed first. New image treatments (overlays, masks): proposed first.
+- **New layout pieces** (hero variant, block type, component variant): propose first, stating whether the change is component-scoped or a global rule. Once agreed, global rules get recorded in the overrides above.
+- **CMS fields:** layout changes keep existing hero/block field shapes. Any field add/rename/remove is proposed first, then `pnpm generate:types` + typecheck.
+- If it suggests changing a brand rule, propose it to me instead of applying it.
+
 ## Content model
 
 - **Pages** (`src/collections/Pages.ts`): title, slug (`home` = `/`), `hero` (`src/heros/config.ts`: none / split / centeredFull / centered / compact / minimal) and `layout` blocks (`src/blocks/config.ts`). Drafts, autosave, Live Preview (`/next/preview`), SEO tab. Publishing with >1 Accent button is blocked (`src/hooks/limitAccentButtons.ts`).
