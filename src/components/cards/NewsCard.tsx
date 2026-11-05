@@ -4,7 +4,7 @@ import { Media } from '@/components/Media'
 import { Badge } from '@/components/ui/badge'
 import { Card } from '@/components/ui/card'
 import { formatDate } from '@/lib/format'
-import { pathFor } from '@/lib/preview'
+import { newsPath } from '@/lib/preview'
 import { cn } from '@/lib/utils'
 import type { News } from '@/payload-types'
 
@@ -17,7 +17,7 @@ export function NewsCard({ item, layout = 'grid' }: { item: Item; layout?: 'grid
     <Card
       className={cn(
         'group/news relative gap-0 py-0 transition-[box-shadow,translate] [@media(hover:hover)]:hover:-translate-y-0.5 [@media(hover:hover)]:hover:shadow-md',
-        row && 'sm:grid sm:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]',
+        row && '@xl:grid @xl:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]',
       )}
     >
       <div className="relative aspect-video overflow-hidden bg-muted">
@@ -32,7 +32,7 @@ export function NewsCard({ item, layout = 'grid' }: { item: Item; layout?: 'grid
         </time>
         <h3 className="line-clamp-3 text-h3">
           <NextLink
-            href={pathFor('news', item.slug)}
+            href={newsPath(item.slug)}
             className="after:absolute after:inset-0 group-hover/news:text-seal-700"
           >
             {item.title}

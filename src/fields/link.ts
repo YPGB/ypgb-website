@@ -9,6 +9,8 @@ type LinkOptions = {
   /** Adds the button style select (Primary / Secondary / Accent / Link). */
   appearance?: boolean
   required?: boolean
+  /** Prefills the label, e.g. a standard button text. */
+  defaultLabel?: string
 }
 
 export const link = ({
@@ -16,6 +18,7 @@ export const link = ({
   label,
   appearance = false,
   required = true,
+  defaultLabel,
 }: LinkOptions = {}): GroupField => {
   const fields: Field[] = [
     {
@@ -46,6 +49,7 @@ export const link = ({
           name: 'label',
           type: 'text',
           required,
+          defaultValue: defaultLabel,
           admin: { width: '50%' },
         },
         {
@@ -53,7 +57,13 @@ export const link = ({
           type: 'relationship',
           relationTo: 'pages',
           required,
-          admin: { width: '30%', condition: (_, s) => s?.type !== 'external' },
+          // Unpublished pages have no public URL, so a link to one would silently disappear.
+          filterOptions: { _status: { equals: 'published' } },
+          admin: {
+            width: '30%',
+            description: 'Published pages only.',
+            condition: (_, s) => s?.type !== 'external',
+          },
         },
         {
           name: 'anchor',

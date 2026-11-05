@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Figtree, Geist, Zilla_Slab } from 'next/font/google'
+import { Figtree, Geist, Newsreader, Source_Serif_4 } from 'next/font/google'
 import { draftMode } from 'next/headers'
 import React from 'react'
 
@@ -11,12 +11,19 @@ import { cn } from '@/lib/utils'
 import './styles.css'
 
 const figtree = Figtree({ subsets: ['latin'], variable: '--font-figtree' })
-const zillaSlab = Zilla_Slab({
+const sourceSerif = Source_Serif_4({
   subsets: ['latin'],
-  weight: ['500', '600', '700'],
-  variable: '--font-zilla-slab',
+  style: ['normal', 'italic'],
+  axes: ['opsz'],
+  variable: '--font-source-serif',
 })
 const geist = Geist({ subsets: ['latin'], variable: '--font-geist' })
+const newsreader = Newsreader({
+  subsets: ['latin'],
+  style: ['normal', 'italic'],
+  axes: ['opsz'],
+  variable: '--font-newsreader',
+})
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettings()
@@ -34,7 +41,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const { isEnabled: draft } = await draftMode()
 
   return (
-    <html lang="id" className={cn(figtree.variable, zillaSlab.variable, geist.variable)}>
+    <html lang="id" data-scroll-behavior="smooth" className={cn(figtree.variable, sourceSerif.variable, geist.variable, newsreader.variable)}>
       <body className="flex min-h-screen flex-col">
         {draft && (
           <>

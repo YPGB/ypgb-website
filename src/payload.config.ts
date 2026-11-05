@@ -1,5 +1,5 @@
 import { postgresAdapter } from '@payloadcms/db-postgres'
-import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import { FixedToolbarFeature, HeadingFeature, lexicalEditor } from '@payloadcms/richtext-lexical'
 import path from 'path'
 import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
@@ -10,6 +10,7 @@ import { News } from './collections/News'
 import { NewsCategories } from './collections/NewsCategories'
 import { Pages } from './collections/Pages'
 import { Pengurus } from './collections/Pengurus'
+import { Testimonials } from './collections/Testimonials'
 import { Units } from './collections/Units'
 import { Users } from './collections/Users'
 import { Navigation } from './globals/Navigation'
@@ -40,9 +41,16 @@ export default buildConfig({
       ],
     },
   },
-  collections: [Pages, News, NewsCategories, Units, Pengurus, Media, Users],
+  collections: [Pages, News, NewsCategories, Units, Pengurus, Testimonials, Media, Users],
   globals: [SiteSettings, Navigation],
-  editor: lexicalEditor(),
+  editor: lexicalEditor({
+    features: ({ defaultFeatures }) => [
+      ...defaultFeatures.filter((feature) => feature.key !== 'heading'),
+      // No H1: the page title is the only main heading.
+      HeadingFeature({ enabledHeadingSizes: ['h2', 'h3', 'h4', 'h5', 'h6'] }),
+      FixedToolbarFeature(),
+    ],
+  }),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),

@@ -104,16 +104,14 @@
   --text-h3--line-height: 1.25;
   --text-lead: 16px;
   --text-lead--line-height: 1.6;
-  --text-overline: 12px;
-  --text-overline--letter-spacing: 0.14em;
 
-  --container-site: 1120px;
   --container-prose: 720px;
 }
 
 @theme inline {
   --font-sans: var(--font-figtree), ui-sans-serif, system-ui, sans-serif;
-  --font-heading: var(--font-zilla-slab), Georgia, 'Times New Roman', serif;
+  --font-heading: var(--font-source-serif), Georgia, 'Times New Roman', serif;
+  --font-editorial: var(--font-newsreader), Georgia, 'Times New Roman', serif;
   --font-display: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
 
   --color-wheat: var(--wheat-gold);

@@ -5,17 +5,20 @@ import {
   RichText as LexicalRichText,
 } from '@payloadcms/richtext-lexical/react'
 
-import { pathFor } from '@/lib/preview'
+import { newsPath, pagePath } from '@/lib/preview'
 import { cn } from '@/lib/utils'
+
+import { blockConverters } from './richtext/blockConverters'
 
 const converters: JSXConvertersFunction = ({ defaultConverters }) => ({
   ...defaultConverters,
+  blocks: blockConverters as never,
   ...LinkJSXConverter({
     internalDocToHref: ({ linkNode }) => {
       const { relationTo, value } = linkNode.fields.doc ?? {}
-      const slug = typeof value === 'object' ? (value as { slug?: string }).slug : null
-      if (relationTo === 'news') return pathFor('news', slug)
-      return pathFor('pages', slug)
+      const doc = typeof value === 'object' ? (value as { slug?: string }) : null
+      if (relationTo === 'news') return newsPath(doc?.slug)
+      return pagePath(doc)
     },
   }),
 })

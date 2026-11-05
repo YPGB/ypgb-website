@@ -1,12 +1,13 @@
-import { ArrowLeft } from 'lucide-react'
+import { CalendarDays, Tag, UserRound } from 'lucide-react'
 import type { Metadata } from 'next'
 import NextLink from 'next/link'
 import { notFound } from 'next/navigation'
 
+import { RelatedNews } from '@/components/cards/RelatedNews'
+import { PageBreadcrumb } from '@/components/layout/PageBreadcrumb'
 import { Media } from '@/components/Media'
 import { RichText } from '@/components/RichText'
 import { Container } from '@/components/Section'
-import { Badge } from '@/components/ui/badge'
 import { formatDate } from '@/lib/format'
 import { getArticle, getNewsList } from '@/lib/queries'
 import { mediaUrl } from '@/lib/site-settings'
@@ -40,33 +41,45 @@ export default async function Article({ params }: Props) {
 
   return (
     <article className="pb-18 md:pb-26">
-      <header data-tone="dark" className="bg-brand pt-13 pb-26 text-brand-foreground md:pt-18">
-        <Container className="max-w-prose">
-          <NextLink
-            href="/berita"
-            className="inline-flex items-center gap-1.5 text-sm opacity-75 transition-opacity hover:opacity-100"
-          >
-            <ArrowLeft className="size-4" aria-hidden /> Semua berita
-          </NextLink>
-          {category && (
-            <Badge className="mt-6.5 block w-fit bg-seal-600 text-white">
-              <NextLink href={`/berita?kategori=${category.slug}`}>{category.title}</NextLink>
-            </Badge>
-          )}
-          <h1 className="mt-3 text-[28px] leading-tight md:text-h1">{article.title}</h1>
-          <p className="mt-3 text-sm opacity-75">
-            <time dateTime={article.publishedAt}>{formatDate(article.publishedAt)}</time> · {article.author}
-          </p>
-        </Container>
-      </header>
-      <Container className="-mt-18 max-w-[calc(var(--container-prose)+3rem)]">
-        {typeof article.coverImage === 'object' && article.coverImage?.url && (
-          <div className="relative mb-9 aspect-video overflow-hidden rounded-2xl bg-muted shadow-lg">
-            <Media media={article.coverImage} sizes="(min-width: 768px) 720px, 100vw" priority />
+      <PageBreadcrumb ancestors={[{ label: 'Berita', url: '/berita' }]} current={article.title} />
+      <Container className="pt-13 md:pt-18">
+        {/* Centered block: prose width alone, or prose + gap + side column from xl. */}
+        <div className="mx-auto max-w-(--container-prose) xl:max-w-[68.25rem]">
+          <header className="border-b border-border pb-6.5">
+            <h1 className="font-editorial text-h1 md:text-display-2">{article.title}</h1>
+            <div className="mt-6.5 flex flex-wrap items-center gap-x-4.5 gap-y-1.5 text-muted-foreground">
+              {category && (
+                <NextLink
+                  href={`/berita?kategori=${category.slug}`}
+                  className="inline-flex items-center gap-1.5 transition-colors hover:text-seal-700"
+                >
+                  <Tag className="size-4" aria-hidden />
+                  {category.title}
+                </NextLink>
+              )}
+              <span className="inline-flex items-center gap-1.5">
+                <CalendarDays className="size-4" aria-hidden />
+                <time dateTime={article.publishedAt}>{formatDate(article.publishedAt)}</time>
+              </span>
+              {article.author && (
+                <span className="inline-flex items-center gap-1.5">
+                  <UserRound className="size-4" aria-hidden />
+                  {article.author}
+                </span>
+              )}
+            </div>
+          </header>
+          <div className="mt-9 xl:grid xl:grid-cols-[minmax(0,var(--container-prose))_20rem] xl:gap-13">
+            <div className="min-w-0">
+              {typeof article.coverImage === 'object' && article.coverImage?.url && (
+                <div className="relative mb-9 aspect-video overflow-hidden rounded-xl bg-muted">
+                  <Media media={article.coverImage} sizes="(min-width: 768px) 720px, 100vw" priority />
+                </div>
+              )}
+              <RichText data={article.content} className="text-base" />
+            </div>
+            <RelatedNews articleId={article.id} />
           </div>
-        )}
-        <div className={article.coverImage ? '' : 'pt-26'}>
-          <RichText data={article.content} className="text-base" />
         </div>
       </Container>
     </article>

@@ -1,8 +1,10 @@
+import { BlocksFeature, lexicalEditor } from '@payloadcms/richtext-lexical'
 import { slugField, type CollectionConfig } from 'payload'
 
 import { publishedOrStaff, staff } from '@/access'
+import { richTextEmbeds } from '@/blocks/config'
 import { revalidateOnChange } from '@/hooks/revalidate'
-import { previewUrl } from '@/lib/preview'
+import { newsPath, previewUrl } from '@/lib/preview'
 
 export const News: CollectionConfig = {
   slug: 'news',
@@ -10,8 +12,8 @@ export const News: CollectionConfig = {
   admin: {
     useAsTitle: 'title',
     defaultColumns: ['title', 'category', 'publishedAt', '_status'],
-    livePreview: { url: ({ data }) => previewUrl('news', data?.slug) },
-    preview: (data) => previewUrl('news', data?.slug as string),
+    livePreview: { url: ({ data }) => previewUrl(newsPath(data?.slug)) },
+    preview: (data) => previewUrl(newsPath(data?.slug as string)),
   },
   defaultSort: '-publishedAt',
   hooks: revalidateOnChange('news'),
@@ -57,6 +59,13 @@ export const News: CollectionConfig = {
       type: 'textarea',
       admin: { description: 'One or two sentences shown on news cards.' },
     },
-    { name: 'content', type: 'richText', required: true },
+    {
+      name: 'content',
+      type: 'richText',
+      required: true,
+      editor: lexicalEditor({
+        features: ({ rootFeatures }) => [...rootFeatures, BlocksFeature({ blocks: richTextEmbeds })],
+      }),
+    },
   ],
 }

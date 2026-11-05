@@ -1,10 +1,15 @@
 import type { GlobalConfig } from 'payload'
 import { revalidateTag } from 'next/cache'
+import { array } from 'payload/shared'
 
 import { admin, anyone } from '@/access'
+import { CTABlock } from '@/blocks/config'
 import { link } from '@/fields/link'
 
 export const NAVIGATION_TAG = 'navigation'
+
+/** More than this won't fit beside the logo at 1024px. */
+const MAX_BAR_LINKS = 5
 
 export const Navigation: GlobalConfig = {
   slug: 'navigation',
@@ -30,7 +35,52 @@ export const Navigation: GlobalConfig = {
               label: 'Menu items',
               maxRows: 7,
               admin: { initCollapsed: true },
+              validate: (value, args) => {
+                const ticked = ((value ?? []) as { showInBar?: boolean }[]).filter((row) => row.showInBar).length
+                if (ticked > MAX_BAR_LINKS) return `At most ${MAX_BAR_LINKS} items can show in the navbar.`
+                return array(value, args)
+              },
+              fields: [
+                link(),
+                {
+                  name: 'showInBar',
+                  type: 'checkbox',
+                  label: 'Show in navbar',
+                  admin: {
+                    description: `Also shows this link beside the menu button on large screens (at most ${MAX_BAR_LINKS}).`,
+                  },
+                },
+                {
+                  name: 'children',
+                  type: 'array',
+                  label: 'Submenu',
+                  labels: { singular: 'Submenu item', plural: 'Submenu items' },
+                  admin: { initCollapsed: true },
+                  fields: [link()],
+                },
+              ],
+            },
+            {
+              name: 'secondaryLinks',
+              type: 'array',
+              label: 'Secondary links',
+              admin: { initCollapsed: true, description: 'Smaller links beside the main menu.' },
               fields: [link()],
+            },
+            {
+              name: 'linkGroups',
+              type: 'array',
+              label: 'Link groups',
+              admin: { initCollapsed: true, description: 'Titled groups under the secondary links, e.g. "Unit Sekolah".' },
+              fields: [
+                { name: 'title', type: 'text', required: true },
+                {
+                  name: 'links',
+                  type: 'array',
+                  admin: { initCollapsed: true },
+                  fields: [link()],
+                },
+              ],
             },
             { name: 'hasHeaderButton', type: 'checkbox', label: 'Show highlighted button (e.g. "Daftar")' },
             {
@@ -43,10 +93,18 @@ export const Navigation: GlobalConfig = {
           label: 'Footer',
           fields: [
             {
+              name: 'footerBlocks',
+              type: 'blocks',
+              label: 'Band above the footer',
+              blocks: [CTABlock],
+              maxRows: 2,
+              admin: { initCollapsed: true, description: 'Shown on every page. Leave empty for none.' },
+            },
+            {
               name: 'footerColumns',
               type: 'array',
-              label: 'Link columns',
-              maxRows: 4,
+              label: 'Link groups',
+              maxRows: 12,
               admin: { initCollapsed: true },
               fields: [
                 { name: 'title', type: 'text', required: true },

@@ -72,6 +72,7 @@ export interface Config {
     'news-categories': NewsCategory;
     units: Unit;
     pengurus: Pengurus;
+    testimonials: Testimonial;
     media: Media;
     users: User;
     forms: Form;
@@ -88,6 +89,7 @@ export interface Config {
     'news-categories': NewsCategoriesSelect<false> | NewsCategoriesSelect<true>;
     units: UnitsSelect<false> | UnitsSelect<true>;
     pengurus: PengurusSelect<false> | PengurusSelect<true>;
+    testimonials: TestimonialsSelect<false> | TestimonialsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
@@ -138,36 +140,55 @@ export interface UserAuthOperations {
   };
 }
 /**
- * The page with slug "home" is the homepage.
+ * The page with slug "home" is the homepage; slug "berita" is the news index (/berita). Renaming either breaks that URL. Slugs must be unique across all pages, even under different parents.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "pages".
  */
 export interface Page {
   id: number;
+  _order?: string | null;
   title: string;
   /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
    */
   generateSlug?: boolean | null;
   slug: string;
+  /**
+   * Nests this page under another; its URL follows, e.g. /parent/this-page.
+   */
+  parent?: (number | null) | Page;
+  breadcrumbs?:
+    | {
+        doc?: (number | null) | Page;
+        url?: string | null;
+        label?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Lists the subpages of this page, or its sibling pages if it has none. Order pages by dragging them in the list view.
+   */
+  showSidebar?: boolean | null;
   hero: {
-    type: 'none' | 'split' | 'centeredFull' | 'centered' | 'compact' | 'minimal';
+    type: 'none' | 'split' | 'centeredFull' | 'centeredCarousel' | 'centered' | 'compact' | 'minimal';
     background?: ('brand' | 'brandDeep' | 'warm') | null;
+    size?: ('small' | 'medium' | 'large') | null;
     /**
      * Optional photo behind the text. A fixed dark overlay keeps the text readable.
      */
     backgroundImage?: (number | null) | Media;
-    overline?: string | null;
-    title: string;
+    title?: string | null;
     lead?: string | null;
-    showBreadcrumb?: boolean | null;
     links?:
       | {
           link: {
             type?: ('page' | 'external') | null;
             newTab?: boolean | null;
             label: string;
+            /**
+             * Published pages only.
+             */
             page?: (number | null) | Page;
             /**
              * Section anchor ID (optional)
@@ -188,14 +209,13 @@ export interface Page {
   layout?:
     | (
         | {
-            section: {
+            section?: {
               /**
                * Lowercase letters, numbers and dashes. Used by menu links (/#unit).
                */
               anchorId?: string | null;
-              background: 'page' | 'warm' | 'brand' | 'brandDeep';
+              background?: ('page' | 'white' | 'warm' | 'brand' | 'brandDeep') | null;
               heading?: {
-                overline?: string | null;
                 title?: string | null;
                 subtitle?: string | null;
                 align?: ('left' | 'center') | null;
@@ -204,6 +224,499 @@ export interface Page {
                   type?: ('page' | 'external') | null;
                   newTab?: boolean | null;
                   label: string;
+                  /**
+                   * Published pages only.
+                   */
+                  page?: (number | null) | Page;
+                  /**
+                   * Section anchor ID (optional)
+                   */
+                  anchor?: string | null;
+                  url?: string | null;
+                };
+              };
+            };
+            /**
+             * Each row has an optional label (left column on desktop) and one or more blocks.
+             */
+            rows: {
+              label?: string | null;
+              blocks: (
+                | {
+                    section?: {
+                      /**
+                       * Lowercase letters, numbers and dashes. Used by menu links (/#unit).
+                       */
+                      anchorId?: string | null;
+                      background?: ('page' | 'white' | 'warm' | 'brand' | 'brandDeep') | null;
+                      heading?: {
+                        title?: string | null;
+                        subtitle?: string | null;
+                        align?: ('left' | 'center') | null;
+                        hasAction?: boolean | null;
+                        action?: {
+                          type?: ('page' | 'external') | null;
+                          newTab?: boolean | null;
+                          label: string;
+                          /**
+                           * Published pages only.
+                           */
+                          page?: (number | null) | Page;
+                          /**
+                           * Section anchor ID (optional)
+                           */
+                          anchor?: string | null;
+                          url?: string | null;
+                        };
+                      };
+                    };
+                    content: {
+                      root: {
+                        type: string;
+                        children: {
+                          type: any;
+                          version: number;
+                          [k: string]: unknown;
+                        }[];
+                        direction: ('ltr' | 'rtl') | null;
+                        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                        indent: number;
+                        version: number;
+                      };
+                      [k: string]: unknown;
+                    };
+                    layout?: ('single' | 'twoColumns') | null;
+                    id?: string | null;
+                    blockName?: string | null;
+                    blockType: 'richText';
+                  }
+                | {
+                    section?: {
+                      /**
+                       * Lowercase letters, numbers and dashes. Used by menu links (/#unit).
+                       */
+                      anchorId?: string | null;
+                      background?: ('page' | 'white' | 'warm' | 'brand' | 'brandDeep') | null;
+                      heading?: {
+                        title?: string | null;
+                        subtitle?: string | null;
+                        align?: ('left' | 'center') | null;
+                        hasAction?: boolean | null;
+                        action?: {
+                          type?: ('page' | 'external') | null;
+                          newTab?: boolean | null;
+                          label: string;
+                          /**
+                           * Published pages only.
+                           */
+                          page?: (number | null) | Page;
+                          /**
+                           * Section anchor ID (optional)
+                           */
+                          anchor?: string | null;
+                          url?: string | null;
+                        };
+                      };
+                    };
+                    tabs: {
+                      label: string;
+                      content: {
+                        root: {
+                          type: string;
+                          children: {
+                            type: any;
+                            version: number;
+                            [k: string]: unknown;
+                          }[];
+                          direction: ('ltr' | 'rtl') | null;
+                          format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                          indent: number;
+                          version: number;
+                        };
+                        [k: string]: unknown;
+                      };
+                      id?: string | null;
+                    }[];
+                    id?: string | null;
+                    blockName?: string | null;
+                    blockType: 'tabs';
+                  }
+                | QuoteBlock
+                | ListBlock
+                | GridListBlock
+                | {
+                    section?: {
+                      /**
+                       * Lowercase letters, numbers and dashes. Used by menu links (/#unit).
+                       */
+                      anchorId?: string | null;
+                      background?: ('page' | 'white' | 'warm' | 'brand' | 'brandDeep') | null;
+                      heading?: {
+                        title?: string | null;
+                        subtitle?: string | null;
+                        align?: ('left' | 'center') | null;
+                        hasAction?: boolean | null;
+                        action?: {
+                          type?: ('page' | 'external') | null;
+                          newTab?: boolean | null;
+                          label: string;
+                          /**
+                           * Published pages only.
+                           */
+                          page?: (number | null) | Page;
+                          /**
+                           * Section anchor ID (optional)
+                           */
+                          anchor?: string | null;
+                          url?: string | null;
+                        };
+                      };
+                    };
+                    media: number | Media;
+                    mediaPosition?: ('left' | 'right') | null;
+                    content: {
+                      root: {
+                        type: string;
+                        children: {
+                          type: any;
+                          version: number;
+                          [k: string]: unknown;
+                        }[];
+                        direction: ('ltr' | 'rtl') | null;
+                        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                        indent: number;
+                        version: number;
+                      };
+                      [k: string]: unknown;
+                    };
+                    links?:
+                      | {
+                          link: {
+                            type?: ('page' | 'external') | null;
+                            newTab?: boolean | null;
+                            label: string;
+                            /**
+                             * Published pages only.
+                             */
+                            page?: (number | null) | Page;
+                            /**
+                             * Section anchor ID (optional)
+                             */
+                            anchor?: string | null;
+                            url?: string | null;
+                            appearance?: ('primary' | 'secondary' | 'accent' | 'link') | null;
+                          };
+                          id?: string | null;
+                        }[]
+                      | null;
+                    id?: string | null;
+                    blockName?: string | null;
+                    blockType: 'mediaText';
+                  }
+                | {
+                    section?: {
+                      /**
+                       * Lowercase letters, numbers and dashes. Used by menu links (/#unit).
+                       */
+                      anchorId?: string | null;
+                      background?: ('page' | 'white' | 'warm' | 'brand' | 'brandDeep') | null;
+                      heading?: {
+                        title?: string | null;
+                        subtitle?: string | null;
+                        align?: ('left' | 'center') | null;
+                        hasAction?: boolean | null;
+                        action?: {
+                          type?: ('page' | 'external') | null;
+                          newTab?: boolean | null;
+                          label: string;
+                          /**
+                           * Published pages only.
+                           */
+                          page?: (number | null) | Page;
+                          /**
+                           * Section anchor ID (optional)
+                           */
+                          anchor?: string | null;
+                          url?: string | null;
+                        };
+                      };
+                    };
+                    columns: '2' | '3' | '4';
+                    style?: ('standard' | 'photo') | null;
+                    source?: ('manual' | 'collection') | null;
+                    sourceCollection?: ('news' | 'units' | 'pengurus' | 'testimonials' | 'subpages') | null;
+                    /**
+                     * Leave empty to show all.
+                     */
+                    limit?: number | null;
+                    cards?:
+                      | {
+                          icon?:
+                            | (
+                                | 'graduation-cap'
+                                | 'school'
+                                | 'book-open-text'
+                                | 'library'
+                                | 'users'
+                                | 'user-round'
+                                | 'baby'
+                                | 'heart-handshake'
+                                | 'hand-heart'
+                                | 'church'
+                                | 'award'
+                                | 'trophy'
+                                | 'star'
+                                | 'sparkles'
+                                | 'lightbulb'
+                                | 'target'
+                                | 'eye'
+                                | 'calendar-days'
+                                | 'clock'
+                                | 'newspaper'
+                                | 'map-pin'
+                                | 'phone'
+                                | 'mail'
+                              )
+                            | null;
+                          title: string;
+                          image?: (number | null) | Media;
+                          text?: string | null;
+                          hasLink?: boolean | null;
+                          link?: {
+                            type?: ('page' | 'external') | null;
+                            newTab?: boolean | null;
+                            label: string;
+                            /**
+                             * Published pages only.
+                             */
+                            page?: (number | null) | Page;
+                            /**
+                             * Section anchor ID (optional)
+                             */
+                            anchor?: string | null;
+                            url?: string | null;
+                          };
+                          id?: string | null;
+                        }[]
+                      | null;
+                    id?: string | null;
+                    blockName?: string | null;
+                    blockType: 'cardGrid';
+                  }
+                | CTABlock
+                | {
+                    section?: {
+                      /**
+                       * Lowercase letters, numbers and dashes. Used by menu links (/#unit).
+                       */
+                      anchorId?: string | null;
+                      background?: ('page' | 'white' | 'warm' | 'brand' | 'brandDeep') | null;
+                      heading?: {
+                        title?: string | null;
+                        subtitle?: string | null;
+                        align?: ('left' | 'center') | null;
+                        hasAction?: boolean | null;
+                        action?: {
+                          type?: ('page' | 'external') | null;
+                          newTab?: boolean | null;
+                          label: string;
+                          /**
+                           * Published pages only.
+                           */
+                          page?: (number | null) | Page;
+                          /**
+                           * Section anchor ID (optional)
+                           */
+                          anchor?: string | null;
+                          url?: string | null;
+                        };
+                      };
+                    };
+                    mode?: ('all' | 'selected') | null;
+                    columns: '3' | '4';
+                    /**
+                     * Leave empty to show every level.
+                     */
+                    level?: ('TK' | 'SD' | 'SMP' | 'SMA')[] | null;
+                    units?: (number | Unit)[] | null;
+                    id?: string | null;
+                    blockName?: string | null;
+                    blockType: 'unitList';
+                  }
+                | {
+                    section?: {
+                      /**
+                       * Lowercase letters, numbers and dashes. Used by menu links (/#unit).
+                       */
+                      anchorId?: string | null;
+                      background?: ('page' | 'white' | 'warm' | 'brand' | 'brandDeep') | null;
+                      heading?: {
+                        title?: string | null;
+                        subtitle?: string | null;
+                        align?: ('left' | 'center') | null;
+                        hasAction?: boolean | null;
+                        action?: {
+                          type?: ('page' | 'external') | null;
+                          newTab?: boolean | null;
+                          label: string;
+                          /**
+                           * Published pages only.
+                           */
+                          page?: (number | null) | Page;
+                          /**
+                           * Section anchor ID (optional)
+                           */
+                          anchor?: string | null;
+                          url?: string | null;
+                        };
+                      };
+                    };
+                    mode?: ('latest' | 'selected' | 'archive') | null;
+                    layout?: ('grid' | 'list') | null;
+                    /**
+                     * In Archive mode: articles per page.
+                     */
+                    limit?: number | null;
+                    /**
+                     * Leave empty for all categories.
+                     */
+                    categories?: (number | NewsCategory)[] | null;
+                    items?: (number | News)[] | null;
+                    id?: string | null;
+                    blockName?: string | null;
+                    blockType: 'newsList';
+                  }
+                | {
+                    section?: {
+                      /**
+                       * Lowercase letters, numbers and dashes. Used by menu links (/#unit).
+                       */
+                      anchorId?: string | null;
+                      background?: ('page' | 'white' | 'warm' | 'brand' | 'brandDeep') | null;
+                      heading?: {
+                        title?: string | null;
+                        subtitle?: string | null;
+                        align?: ('left' | 'center') | null;
+                        hasAction?: boolean | null;
+                        action?: {
+                          type?: ('page' | 'external') | null;
+                          newTab?: boolean | null;
+                          label: string;
+                          /**
+                           * Published pages only.
+                           */
+                          page?: (number | null) | Page;
+                          /**
+                           * Section anchor ID (optional)
+                           */
+                          anchor?: string | null;
+                          url?: string | null;
+                        };
+                      };
+                    };
+                    /**
+                     * Leave empty to show all active members.
+                     */
+                    organ?: ('pembina' | 'pengurus' | 'pengawas')[] | null;
+                    groupByOrgan?: boolean | null;
+                    id?: string | null;
+                    blockName?: string | null;
+                    blockType: 'pengurusList';
+                  }
+                | {
+                    section?: {
+                      /**
+                       * Lowercase letters, numbers and dashes. Used by menu links (/#unit).
+                       */
+                      anchorId?: string | null;
+                      background?: ('page' | 'white' | 'warm' | 'brand' | 'brandDeep') | null;
+                      heading?: {
+                        title?: string | null;
+                        subtitle?: string | null;
+                        align?: ('left' | 'center') | null;
+                        hasAction?: boolean | null;
+                        action?: {
+                          type?: ('page' | 'external') | null;
+                          newTab?: boolean | null;
+                          label: string;
+                          /**
+                           * Published pages only.
+                           */
+                          page?: (number | null) | Page;
+                          /**
+                           * Section anchor ID (optional)
+                           */
+                          anchor?: string | null;
+                          url?: string | null;
+                        };
+                      };
+                    };
+                    mode?: ('all' | 'selected') | null;
+                    items?: (number | Testimonial)[] | null;
+                    id?: string | null;
+                    blockName?: string | null;
+                    blockType: 'testimonials';
+                  }
+                | {
+                    section?: {
+                      /**
+                       * Lowercase letters, numbers and dashes. Used by menu links (/#unit).
+                       */
+                      anchorId?: string | null;
+                      background?: ('page' | 'white' | 'warm' | 'brand' | 'brandDeep') | null;
+                      heading?: {
+                        title?: string | null;
+                        subtitle?: string | null;
+                        align?: ('left' | 'center') | null;
+                        hasAction?: boolean | null;
+                        action?: {
+                          type?: ('page' | 'external') | null;
+                          newTab?: boolean | null;
+                          label: string;
+                          /**
+                           * Published pages only.
+                           */
+                          page?: (number | null) | Page;
+                          /**
+                           * Section anchor ID (optional)
+                           */
+                          anchor?: string | null;
+                          url?: string | null;
+                        };
+                      };
+                    };
+                    showDetails?: boolean | null;
+                    form?: (number | null) | Form;
+                    id?: string | null;
+                    blockName?: string | null;
+                    blockType: 'contact';
+                  }
+              )[];
+              id?: string | null;
+            }[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'contentGroup';
+          }
+        | {
+            section?: {
+              /**
+               * Lowercase letters, numbers and dashes. Used by menu links (/#unit).
+               */
+              anchorId?: string | null;
+              background?: ('page' | 'white' | 'warm' | 'brand' | 'brandDeep') | null;
+              heading?: {
+                title?: string | null;
+                subtitle?: string | null;
+                align?: ('left' | 'center') | null;
+                hasAction?: boolean | null;
+                action?: {
+                  type?: ('page' | 'external') | null;
+                  newTab?: boolean | null;
+                  label: string;
+                  /**
+                   * Published pages only.
+                   */
                   page?: (number | null) | Page;
                   /**
                    * Section anchor ID (optional)
@@ -234,14 +747,13 @@ export interface Page {
             blockType: 'richText';
           }
         | {
-            section: {
+            section?: {
               /**
                * Lowercase letters, numbers and dashes. Used by menu links (/#unit).
                */
               anchorId?: string | null;
-              background: 'page' | 'warm' | 'brand' | 'brandDeep';
+              background?: ('page' | 'white' | 'warm' | 'brand' | 'brandDeep') | null;
               heading?: {
-                overline?: string | null;
                 title?: string | null;
                 subtitle?: string | null;
                 align?: ('left' | 'center') | null;
@@ -250,6 +762,9 @@ export interface Page {
                   type?: ('page' | 'external') | null;
                   newTab?: boolean | null;
                   label: string;
+                  /**
+                   * Published pages only.
+                   */
                   page?: (number | null) | Page;
                   /**
                    * Section anchor ID (optional)
@@ -282,15 +797,17 @@ export interface Page {
             blockName?: string | null;
             blockType: 'tabs';
           }
+        | QuoteBlock
+        | ListBlock
+        | GridListBlock
         | {
-            section: {
+            section?: {
               /**
                * Lowercase letters, numbers and dashes. Used by menu links (/#unit).
                */
               anchorId?: string | null;
-              background: 'page' | 'warm' | 'brand' | 'brandDeep';
+              background?: ('page' | 'white' | 'warm' | 'brand' | 'brandDeep') | null;
               heading?: {
-                overline?: string | null;
                 title?: string | null;
                 subtitle?: string | null;
                 align?: ('left' | 'center') | null;
@@ -299,6 +816,9 @@ export interface Page {
                   type?: ('page' | 'external') | null;
                   newTab?: boolean | null;
                   label: string;
+                  /**
+                   * Published pages only.
+                   */
                   page?: (number | null) | Page;
                   /**
                    * Section anchor ID (optional)
@@ -331,6 +851,9 @@ export interface Page {
                     type?: ('page' | 'external') | null;
                     newTab?: boolean | null;
                     label: string;
+                    /**
+                     * Published pages only.
+                     */
                     page?: (number | null) | Page;
                     /**
                      * Section anchor ID (optional)
@@ -347,14 +870,13 @@ export interface Page {
             blockType: 'mediaText';
           }
         | {
-            section: {
+            section?: {
               /**
                * Lowercase letters, numbers and dashes. Used by menu links (/#unit).
                */
               anchorId?: string | null;
-              background: 'page' | 'warm' | 'brand' | 'brandDeep';
+              background?: ('page' | 'white' | 'warm' | 'brand' | 'brandDeep') | null;
               heading?: {
-                overline?: string | null;
                 title?: string | null;
                 subtitle?: string | null;
                 align?: ('left' | 'center') | null;
@@ -363,6 +885,9 @@ export interface Page {
                   type?: ('page' | 'external') | null;
                   newTab?: boolean | null;
                   label: string;
+                  /**
+                   * Published pages only.
+                   */
                   page?: (number | null) | Page;
                   /**
                    * Section anchor ID (optional)
@@ -373,139 +898,76 @@ export interface Page {
               };
             };
             columns: '2' | '3' | '4';
-            cards: {
-              icon?:
-                | (
-                    | 'graduation-cap'
-                    | 'school'
-                    | 'book-open-text'
-                    | 'library'
-                    | 'users'
-                    | 'user-round'
-                    | 'baby'
-                    | 'heart-handshake'
-                    | 'hand-heart'
-                    | 'church'
-                    | 'award'
-                    | 'trophy'
-                    | 'star'
-                    | 'sparkles'
-                    | 'lightbulb'
-                    | 'target'
-                    | 'eye'
-                    | 'calendar-days'
-                    | 'clock'
-                    | 'newspaper'
-                    | 'map-pin'
-                    | 'phone'
-                    | 'mail'
-                  )
-                | null;
-              title: string;
-              text?: string | null;
-              hasLink?: boolean | null;
-              link?: {
-                type?: ('page' | 'external') | null;
-                newTab?: boolean | null;
-                label: string;
-                page?: (number | null) | Page;
-                /**
-                 * Section anchor ID (optional)
-                 */
-                anchor?: string | null;
-                url?: string | null;
-              };
-              id?: string | null;
-            }[];
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'cardGrid';
-          }
-        | {
-            section: {
-              /**
-               * Lowercase letters, numbers and dashes. Used by menu links (/#unit).
-               */
-              anchorId?: string | null;
-              background: 'page' | 'warm' | 'brand' | 'brandDeep';
-              heading?: {
-                overline?: string | null;
-                title?: string | null;
-                subtitle?: string | null;
-                align?: ('left' | 'center') | null;
-                hasAction?: boolean | null;
-                action?: {
-                  type?: ('page' | 'external') | null;
-                  newTab?: boolean | null;
-                  label: string;
-                  page?: (number | null) | Page;
-                  /**
-                   * Section anchor ID (optional)
-                   */
-                  anchor?: string | null;
-                  url?: string | null;
-                };
-              };
-            };
-            icon?:
-              | (
-                  | 'graduation-cap'
-                  | 'school'
-                  | 'book-open-text'
-                  | 'library'
-                  | 'users'
-                  | 'user-round'
-                  | 'baby'
-                  | 'heart-handshake'
-                  | 'hand-heart'
-                  | 'church'
-                  | 'award'
-                  | 'trophy'
-                  | 'star'
-                  | 'sparkles'
-                  | 'lightbulb'
-                  | 'target'
-                  | 'eye'
-                  | 'calendar-days'
-                  | 'clock'
-                  | 'newspaper'
-                  | 'map-pin'
-                  | 'phone'
-                  | 'mail'
-                )
-              | null;
-            title: string;
-            text?: string | null;
-            links?:
+            style?: ('standard' | 'photo') | null;
+            source?: ('manual' | 'collection') | null;
+            sourceCollection?: ('news' | 'units' | 'pengurus' | 'testimonials' | 'subpages') | null;
+            /**
+             * Leave empty to show all.
+             */
+            limit?: number | null;
+            cards?:
               | {
-                  link: {
+                  icon?:
+                    | (
+                        | 'graduation-cap'
+                        | 'school'
+                        | 'book-open-text'
+                        | 'library'
+                        | 'users'
+                        | 'user-round'
+                        | 'baby'
+                        | 'heart-handshake'
+                        | 'hand-heart'
+                        | 'church'
+                        | 'award'
+                        | 'trophy'
+                        | 'star'
+                        | 'sparkles'
+                        | 'lightbulb'
+                        | 'target'
+                        | 'eye'
+                        | 'calendar-days'
+                        | 'clock'
+                        | 'newspaper'
+                        | 'map-pin'
+                        | 'phone'
+                        | 'mail'
+                      )
+                    | null;
+                  title: string;
+                  image?: (number | null) | Media;
+                  text?: string | null;
+                  hasLink?: boolean | null;
+                  link?: {
                     type?: ('page' | 'external') | null;
                     newTab?: boolean | null;
                     label: string;
+                    /**
+                     * Published pages only.
+                     */
                     page?: (number | null) | Page;
                     /**
                      * Section anchor ID (optional)
                      */
                     anchor?: string | null;
                     url?: string | null;
-                    appearance?: ('primary' | 'secondary' | 'accent' | 'link') | null;
                   };
                   id?: string | null;
                 }[]
               | null;
             id?: string | null;
             blockName?: string | null;
-            blockType: 'cta';
+            blockType: 'cardGrid';
           }
+        | CTABlock
         | {
-            section: {
+            section?: {
               /**
                * Lowercase letters, numbers and dashes. Used by menu links (/#unit).
                */
               anchorId?: string | null;
-              background: 'page' | 'warm' | 'brand' | 'brandDeep';
+              background?: ('page' | 'white' | 'warm' | 'brand' | 'brandDeep') | null;
               heading?: {
-                overline?: string | null;
                 title?: string | null;
                 subtitle?: string | null;
                 align?: ('left' | 'center') | null;
@@ -514,6 +976,9 @@ export interface Page {
                   type?: ('page' | 'external') | null;
                   newTab?: boolean | null;
                   label: string;
+                  /**
+                   * Published pages only.
+                   */
                   page?: (number | null) | Page;
                   /**
                    * Section anchor ID (optional)
@@ -535,14 +1000,13 @@ export interface Page {
             blockType: 'unitList';
           }
         | {
-            section: {
+            section?: {
               /**
                * Lowercase letters, numbers and dashes. Used by menu links (/#unit).
                */
               anchorId?: string | null;
-              background: 'page' | 'warm' | 'brand' | 'brandDeep';
+              background?: ('page' | 'white' | 'warm' | 'brand' | 'brandDeep') | null;
               heading?: {
-                overline?: string | null;
                 title?: string | null;
                 subtitle?: string | null;
                 align?: ('left' | 'center') | null;
@@ -551,6 +1015,9 @@ export interface Page {
                   type?: ('page' | 'external') | null;
                   newTab?: boolean | null;
                   label: string;
+                  /**
+                   * Published pages only.
+                   */
                   page?: (number | null) | Page;
                   /**
                    * Section anchor ID (optional)
@@ -560,8 +1027,11 @@ export interface Page {
                 };
               };
             };
-            mode?: ('latest' | 'selected') | null;
+            mode?: ('latest' | 'selected' | 'archive') | null;
             layout?: ('grid' | 'list') | null;
+            /**
+             * In Archive mode: articles per page.
+             */
             limit?: number | null;
             /**
              * Leave empty for all categories.
@@ -573,14 +1043,13 @@ export interface Page {
             blockType: 'newsList';
           }
         | {
-            section: {
+            section?: {
               /**
                * Lowercase letters, numbers and dashes. Used by menu links (/#unit).
                */
               anchorId?: string | null;
-              background: 'page' | 'warm' | 'brand' | 'brandDeep';
+              background?: ('page' | 'white' | 'warm' | 'brand' | 'brandDeep') | null;
               heading?: {
-                overline?: string | null;
                 title?: string | null;
                 subtitle?: string | null;
                 align?: ('left' | 'center') | null;
@@ -589,6 +1058,9 @@ export interface Page {
                   type?: ('page' | 'external') | null;
                   newTab?: boolean | null;
                   label: string;
+                  /**
+                   * Published pages only.
+                   */
                   page?: (number | null) | Page;
                   /**
                    * Section anchor ID (optional)
@@ -608,14 +1080,13 @@ export interface Page {
             blockType: 'pengurusList';
           }
         | {
-            section: {
+            section?: {
               /**
                * Lowercase letters, numbers and dashes. Used by menu links (/#unit).
                */
               anchorId?: string | null;
-              background: 'page' | 'warm' | 'brand' | 'brandDeep';
+              background?: ('page' | 'white' | 'warm' | 'brand' | 'brandDeep') | null;
               heading?: {
-                overline?: string | null;
                 title?: string | null;
                 subtitle?: string | null;
                 align?: ('left' | 'center') | null;
@@ -624,6 +1095,43 @@ export interface Page {
                   type?: ('page' | 'external') | null;
                   newTab?: boolean | null;
                   label: string;
+                  /**
+                   * Published pages only.
+                   */
+                  page?: (number | null) | Page;
+                  /**
+                   * Section anchor ID (optional)
+                   */
+                  anchor?: string | null;
+                  url?: string | null;
+                };
+              };
+            };
+            mode?: ('all' | 'selected') | null;
+            items?: (number | Testimonial)[] | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'testimonials';
+          }
+        | {
+            section?: {
+              /**
+               * Lowercase letters, numbers and dashes. Used by menu links (/#unit).
+               */
+              anchorId?: string | null;
+              background?: ('page' | 'white' | 'warm' | 'brand' | 'brandDeep') | null;
+              heading?: {
+                title?: string | null;
+                subtitle?: string | null;
+                align?: ('left' | 'center') | null;
+                hasAction?: boolean | null;
+                action?: {
+                  type?: ('page' | 'external') | null;
+                  newTab?: boolean | null;
+                  label: string;
+                  /**
+                   * Published pages only.
+                   */
                   page?: (number | null) | Page;
                   /**
                    * Section anchor ID (optional)
@@ -700,6 +1208,235 @@ export interface Media {
       filename?: string | null;
     };
   };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "QuoteBlock".
+ */
+export interface QuoteBlock {
+  section?: {
+    /**
+     * Lowercase letters, numbers and dashes. Used by menu links (/#unit).
+     */
+    anchorId?: string | null;
+    background?: ('page' | 'white' | 'warm' | 'brand' | 'brandDeep') | null;
+    heading?: {
+      title?: string | null;
+      subtitle?: string | null;
+      align?: ('left' | 'center') | null;
+      hasAction?: boolean | null;
+      action?: {
+        type?: ('page' | 'external') | null;
+        newTab?: boolean | null;
+        label: string;
+        /**
+         * Published pages only.
+         */
+        page?: (number | null) | Page;
+        /**
+         * Section anchor ID (optional)
+         */
+        anchor?: string | null;
+        url?: string | null;
+      };
+    };
+  };
+  /**
+   * Quotation marks at the start or end are removed on the page.
+   */
+  text: string;
+  /**
+   * Optional line shown below the quote.
+   */
+  description?: string | null;
+  align: 'center' | 'left';
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'quote';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ListBlock".
+ */
+export interface ListBlock {
+  section?: {
+    /**
+     * Lowercase letters, numbers and dashes. Used by menu links (/#unit).
+     */
+    anchorId?: string | null;
+    background?: ('page' | 'white' | 'warm' | 'brand' | 'brandDeep') | null;
+    heading?: {
+      title?: string | null;
+      subtitle?: string | null;
+      align?: ('left' | 'center') | null;
+      hasAction?: boolean | null;
+      action?: {
+        type?: ('page' | 'external') | null;
+        newTab?: boolean | null;
+        label: string;
+        /**
+         * Published pages only.
+         */
+        page?: (number | null) | Page;
+        /**
+         * Section anchor ID (optional)
+         */
+        anchor?: string | null;
+        url?: string | null;
+      };
+    };
+  };
+  heading?: string | null;
+  intro?: string | null;
+  style: 'numbered' | 'bulleted';
+  columns: '1' | '2' | '3';
+  items: {
+    text: string;
+    id?: string | null;
+  }[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'list';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "GridListBlock".
+ */
+export interface GridListBlock {
+  section?: {
+    /**
+     * Lowercase letters, numbers and dashes. Used by menu links (/#unit).
+     */
+    anchorId?: string | null;
+    background?: ('page' | 'white' | 'warm' | 'brand' | 'brandDeep') | null;
+    heading?: {
+      title?: string | null;
+      subtitle?: string | null;
+      align?: ('left' | 'center') | null;
+      hasAction?: boolean | null;
+      action?: {
+        type?: ('page' | 'external') | null;
+        newTab?: boolean | null;
+        label: string;
+        /**
+         * Published pages only.
+         */
+        page?: (number | null) | Page;
+        /**
+         * Section anchor ID (optional)
+         */
+        anchor?: string | null;
+        url?: string | null;
+      };
+    };
+  };
+  heading?: string | null;
+  intro?: string | null;
+  columns: '1' | '2' | '3' | '4';
+  items: {
+    title: string;
+    description: string;
+    id?: string | null;
+  }[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'gridList';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CTABlock".
+ */
+export interface CTABlock {
+  section?: {
+    /**
+     * Lowercase letters, numbers and dashes. Used by menu links (/#unit).
+     */
+    anchorId?: string | null;
+    background?: ('page' | 'white' | 'warm' | 'brand' | 'brandDeep') | null;
+    heading?: {
+      title?: string | null;
+      subtitle?: string | null;
+      align?: ('left' | 'center') | null;
+      hasAction?: boolean | null;
+      action?: {
+        type?: ('page' | 'external') | null;
+        newTab?: boolean | null;
+        label: string;
+        /**
+         * Published pages only.
+         */
+        page?: (number | null) | Page;
+        /**
+         * Section anchor ID (optional)
+         */
+        anchor?: string | null;
+        url?: string | null;
+      };
+    };
+  };
+  /**
+   * Narrow is a compact panel with one button.
+   */
+  size: 'big' | 'narrow';
+  /**
+   * Optional photo behind the text, with a dark overlay. Big size only; not shown next to a page sidebar.
+   */
+  backgroundImage?: (number | null) | Media;
+  icon?:
+    | (
+        | 'graduation-cap'
+        | 'school'
+        | 'book-open-text'
+        | 'library'
+        | 'users'
+        | 'user-round'
+        | 'baby'
+        | 'heart-handshake'
+        | 'hand-heart'
+        | 'church'
+        | 'award'
+        | 'trophy'
+        | 'star'
+        | 'sparkles'
+        | 'lightbulb'
+        | 'target'
+        | 'eye'
+        | 'calendar-days'
+        | 'clock'
+        | 'newspaper'
+        | 'map-pin'
+        | 'phone'
+        | 'mail'
+      )
+    | null;
+  title: string;
+  text?: string | null;
+  /**
+   * Narrow shows only the first button.
+   */
+  links?:
+    | {
+        link: {
+          type?: ('page' | 'external') | null;
+          newTab?: boolean | null;
+          label: string;
+          /**
+           * Published pages only.
+           */
+          page?: (number | null) | Page;
+          /**
+           * Section anchor ID (optional)
+           */
+          anchor?: string | null;
+          url?: string | null;
+          appearance?: ('primary' | 'secondary' | 'accent' | 'link') | null;
+        };
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'cta';
 }
 /**
  * Drag rows to set the display order.
@@ -784,6 +1521,23 @@ export interface News {
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
+}
+/**
+ * Drag rows to set the display order. Shown through the Testimonials block on any page.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "testimonials".
+ */
+export interface Testimonial {
+  id: number;
+  _order?: string | null;
+  quote: string;
+  name: string;
+  detail?: string | null;
+  role?: string | null;
+  photo?: (number | null) | Media;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1056,6 +1810,10 @@ export interface PayloadLockedDocument {
         value: number | Pengurus;
       } | null)
     | ({
+        relationTo: 'testimonials';
+        value: number | Testimonial;
+      } | null)
+    | ({
         relationTo: 'media';
         value: number | Media;
       } | null)
@@ -1118,19 +1876,29 @@ export interface PayloadMigration {
  * via the `definition` "pages_select".
  */
 export interface PagesSelect<T extends boolean = true> {
+  _order?: T;
   title?: T;
   generateSlug?: T;
   slug?: T;
+  parent?: T;
+  breadcrumbs?:
+    | T
+    | {
+        doc?: T;
+        url?: T;
+        label?: T;
+        id?: T;
+      };
+  showSidebar?: T;
   hero?:
     | T
     | {
         type?: T;
         background?: T;
+        size?: T;
         backgroundImage?: T;
-        overline?: T;
         title?: T;
         lead?: T;
-        showBreadcrumb?: T;
         links?:
           | T
           | {
@@ -1153,6 +1921,388 @@ export interface PagesSelect<T extends boolean = true> {
   layout?:
     | T
     | {
+        contentGroup?:
+          | T
+          | {
+              section?:
+                | T
+                | {
+                    anchorId?: T;
+                    background?: T;
+                    heading?:
+                      | T
+                      | {
+                          title?: T;
+                          subtitle?: T;
+                          align?: T;
+                          hasAction?: T;
+                          action?:
+                            | T
+                            | {
+                                type?: T;
+                                newTab?: T;
+                                label?: T;
+                                page?: T;
+                                anchor?: T;
+                                url?: T;
+                              };
+                        };
+                  };
+              rows?:
+                | T
+                | {
+                    label?: T;
+                    blocks?:
+                      | T
+                      | {
+                          richText?:
+                            | T
+                            | {
+                                section?:
+                                  | T
+                                  | {
+                                      anchorId?: T;
+                                      background?: T;
+                                      heading?:
+                                        | T
+                                        | {
+                                            title?: T;
+                                            subtitle?: T;
+                                            align?: T;
+                                            hasAction?: T;
+                                            action?:
+                                              | T
+                                              | {
+                                                  type?: T;
+                                                  newTab?: T;
+                                                  label?: T;
+                                                  page?: T;
+                                                  anchor?: T;
+                                                  url?: T;
+                                                };
+                                          };
+                                    };
+                                content?: T;
+                                layout?: T;
+                                id?: T;
+                                blockName?: T;
+                              };
+                          tabs?:
+                            | T
+                            | {
+                                section?:
+                                  | T
+                                  | {
+                                      anchorId?: T;
+                                      background?: T;
+                                      heading?:
+                                        | T
+                                        | {
+                                            title?: T;
+                                            subtitle?: T;
+                                            align?: T;
+                                            hasAction?: T;
+                                            action?:
+                                              | T
+                                              | {
+                                                  type?: T;
+                                                  newTab?: T;
+                                                  label?: T;
+                                                  page?: T;
+                                                  anchor?: T;
+                                                  url?: T;
+                                                };
+                                          };
+                                    };
+                                tabs?:
+                                  | T
+                                  | {
+                                      label?: T;
+                                      content?: T;
+                                      id?: T;
+                                    };
+                                id?: T;
+                                blockName?: T;
+                              };
+                          quote?: T | QuoteBlockSelect<T>;
+                          list?: T | ListBlockSelect<T>;
+                          gridList?: T | GridListBlockSelect<T>;
+                          mediaText?:
+                            | T
+                            | {
+                                section?:
+                                  | T
+                                  | {
+                                      anchorId?: T;
+                                      background?: T;
+                                      heading?:
+                                        | T
+                                        | {
+                                            title?: T;
+                                            subtitle?: T;
+                                            align?: T;
+                                            hasAction?: T;
+                                            action?:
+                                              | T
+                                              | {
+                                                  type?: T;
+                                                  newTab?: T;
+                                                  label?: T;
+                                                  page?: T;
+                                                  anchor?: T;
+                                                  url?: T;
+                                                };
+                                          };
+                                    };
+                                media?: T;
+                                mediaPosition?: T;
+                                content?: T;
+                                links?:
+                                  | T
+                                  | {
+                                      link?:
+                                        | T
+                                        | {
+                                            type?: T;
+                                            newTab?: T;
+                                            label?: T;
+                                            page?: T;
+                                            anchor?: T;
+                                            url?: T;
+                                            appearance?: T;
+                                          };
+                                      id?: T;
+                                    };
+                                id?: T;
+                                blockName?: T;
+                              };
+                          cardGrid?:
+                            | T
+                            | {
+                                section?:
+                                  | T
+                                  | {
+                                      anchorId?: T;
+                                      background?: T;
+                                      heading?:
+                                        | T
+                                        | {
+                                            title?: T;
+                                            subtitle?: T;
+                                            align?: T;
+                                            hasAction?: T;
+                                            action?:
+                                              | T
+                                              | {
+                                                  type?: T;
+                                                  newTab?: T;
+                                                  label?: T;
+                                                  page?: T;
+                                                  anchor?: T;
+                                                  url?: T;
+                                                };
+                                          };
+                                    };
+                                columns?: T;
+                                style?: T;
+                                source?: T;
+                                sourceCollection?: T;
+                                limit?: T;
+                                cards?:
+                                  | T
+                                  | {
+                                      icon?: T;
+                                      title?: T;
+                                      image?: T;
+                                      text?: T;
+                                      hasLink?: T;
+                                      link?:
+                                        | T
+                                        | {
+                                            type?: T;
+                                            newTab?: T;
+                                            label?: T;
+                                            page?: T;
+                                            anchor?: T;
+                                            url?: T;
+                                          };
+                                      id?: T;
+                                    };
+                                id?: T;
+                                blockName?: T;
+                              };
+                          cta?: T | CTABlockSelect<T>;
+                          unitList?:
+                            | T
+                            | {
+                                section?:
+                                  | T
+                                  | {
+                                      anchorId?: T;
+                                      background?: T;
+                                      heading?:
+                                        | T
+                                        | {
+                                            title?: T;
+                                            subtitle?: T;
+                                            align?: T;
+                                            hasAction?: T;
+                                            action?:
+                                              | T
+                                              | {
+                                                  type?: T;
+                                                  newTab?: T;
+                                                  label?: T;
+                                                  page?: T;
+                                                  anchor?: T;
+                                                  url?: T;
+                                                };
+                                          };
+                                    };
+                                mode?: T;
+                                columns?: T;
+                                level?: T;
+                                units?: T;
+                                id?: T;
+                                blockName?: T;
+                              };
+                          newsList?:
+                            | T
+                            | {
+                                section?:
+                                  | T
+                                  | {
+                                      anchorId?: T;
+                                      background?: T;
+                                      heading?:
+                                        | T
+                                        | {
+                                            title?: T;
+                                            subtitle?: T;
+                                            align?: T;
+                                            hasAction?: T;
+                                            action?:
+                                              | T
+                                              | {
+                                                  type?: T;
+                                                  newTab?: T;
+                                                  label?: T;
+                                                  page?: T;
+                                                  anchor?: T;
+                                                  url?: T;
+                                                };
+                                          };
+                                    };
+                                mode?: T;
+                                layout?: T;
+                                limit?: T;
+                                categories?: T;
+                                items?: T;
+                                id?: T;
+                                blockName?: T;
+                              };
+                          pengurusList?:
+                            | T
+                            | {
+                                section?:
+                                  | T
+                                  | {
+                                      anchorId?: T;
+                                      background?: T;
+                                      heading?:
+                                        | T
+                                        | {
+                                            title?: T;
+                                            subtitle?: T;
+                                            align?: T;
+                                            hasAction?: T;
+                                            action?:
+                                              | T
+                                              | {
+                                                  type?: T;
+                                                  newTab?: T;
+                                                  label?: T;
+                                                  page?: T;
+                                                  anchor?: T;
+                                                  url?: T;
+                                                };
+                                          };
+                                    };
+                                organ?: T;
+                                groupByOrgan?: T;
+                                id?: T;
+                                blockName?: T;
+                              };
+                          testimonials?:
+                            | T
+                            | {
+                                section?:
+                                  | T
+                                  | {
+                                      anchorId?: T;
+                                      background?: T;
+                                      heading?:
+                                        | T
+                                        | {
+                                            title?: T;
+                                            subtitle?: T;
+                                            align?: T;
+                                            hasAction?: T;
+                                            action?:
+                                              | T
+                                              | {
+                                                  type?: T;
+                                                  newTab?: T;
+                                                  label?: T;
+                                                  page?: T;
+                                                  anchor?: T;
+                                                  url?: T;
+                                                };
+                                          };
+                                    };
+                                mode?: T;
+                                items?: T;
+                                id?: T;
+                                blockName?: T;
+                              };
+                          contact?:
+                            | T
+                            | {
+                                section?:
+                                  | T
+                                  | {
+                                      anchorId?: T;
+                                      background?: T;
+                                      heading?:
+                                        | T
+                                        | {
+                                            title?: T;
+                                            subtitle?: T;
+                                            align?: T;
+                                            hasAction?: T;
+                                            action?:
+                                              | T
+                                              | {
+                                                  type?: T;
+                                                  newTab?: T;
+                                                  label?: T;
+                                                  page?: T;
+                                                  anchor?: T;
+                                                  url?: T;
+                                                };
+                                          };
+                                    };
+                                showDetails?: T;
+                                form?: T;
+                                id?: T;
+                                blockName?: T;
+                              };
+                        };
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
         richText?:
           | T
           | {
@@ -1164,7 +2314,6 @@ export interface PagesSelect<T extends boolean = true> {
                     heading?:
                       | T
                       | {
-                          overline?: T;
                           title?: T;
                           subtitle?: T;
                           align?: T;
@@ -1197,7 +2346,6 @@ export interface PagesSelect<T extends boolean = true> {
                     heading?:
                       | T
                       | {
-                          overline?: T;
                           title?: T;
                           subtitle?: T;
                           align?: T;
@@ -1224,6 +2372,9 @@ export interface PagesSelect<T extends boolean = true> {
               id?: T;
               blockName?: T;
             };
+        quote?: T | QuoteBlockSelect<T>;
+        list?: T | ListBlockSelect<T>;
+        gridList?: T | GridListBlockSelect<T>;
         mediaText?:
           | T
           | {
@@ -1235,7 +2386,6 @@ export interface PagesSelect<T extends boolean = true> {
                     heading?:
                       | T
                       | {
-                          overline?: T;
                           title?: T;
                           subtitle?: T;
                           align?: T;
@@ -1285,7 +2435,6 @@ export interface PagesSelect<T extends boolean = true> {
                     heading?:
                       | T
                       | {
-                          overline?: T;
                           title?: T;
                           subtitle?: T;
                           align?: T;
@@ -1303,11 +2452,16 @@ export interface PagesSelect<T extends boolean = true> {
                         };
                   };
               columns?: T;
+              style?: T;
+              source?: T;
+              sourceCollection?: T;
+              limit?: T;
               cards?:
                 | T
                 | {
                     icon?: T;
                     title?: T;
+                    image?: T;
                     text?: T;
                     hasLink?: T;
                     link?:
@@ -1325,56 +2479,7 @@ export interface PagesSelect<T extends boolean = true> {
               id?: T;
               blockName?: T;
             };
-        cta?:
-          | T
-          | {
-              section?:
-                | T
-                | {
-                    anchorId?: T;
-                    background?: T;
-                    heading?:
-                      | T
-                      | {
-                          overline?: T;
-                          title?: T;
-                          subtitle?: T;
-                          align?: T;
-                          hasAction?: T;
-                          action?:
-                            | T
-                            | {
-                                type?: T;
-                                newTab?: T;
-                                label?: T;
-                                page?: T;
-                                anchor?: T;
-                                url?: T;
-                              };
-                        };
-                  };
-              icon?: T;
-              title?: T;
-              text?: T;
-              links?:
-                | T
-                | {
-                    link?:
-                      | T
-                      | {
-                          type?: T;
-                          newTab?: T;
-                          label?: T;
-                          page?: T;
-                          anchor?: T;
-                          url?: T;
-                          appearance?: T;
-                        };
-                    id?: T;
-                  };
-              id?: T;
-              blockName?: T;
-            };
+        cta?: T | CTABlockSelect<T>;
         unitList?:
           | T
           | {
@@ -1386,7 +2491,6 @@ export interface PagesSelect<T extends boolean = true> {
                     heading?:
                       | T
                       | {
-                          overline?: T;
                           title?: T;
                           subtitle?: T;
                           align?: T;
@@ -1421,7 +2525,6 @@ export interface PagesSelect<T extends boolean = true> {
                     heading?:
                       | T
                       | {
-                          overline?: T;
                           title?: T;
                           subtitle?: T;
                           align?: T;
@@ -1457,7 +2560,6 @@ export interface PagesSelect<T extends boolean = true> {
                     heading?:
                       | T
                       | {
-                          overline?: T;
                           title?: T;
                           subtitle?: T;
                           align?: T;
@@ -1479,6 +2581,38 @@ export interface PagesSelect<T extends boolean = true> {
               id?: T;
               blockName?: T;
             };
+        testimonials?:
+          | T
+          | {
+              section?:
+                | T
+                | {
+                    anchorId?: T;
+                    background?: T;
+                    heading?:
+                      | T
+                      | {
+                          title?: T;
+                          subtitle?: T;
+                          align?: T;
+                          hasAction?: T;
+                          action?:
+                            | T
+                            | {
+                                type?: T;
+                                newTab?: T;
+                                label?: T;
+                                page?: T;
+                                anchor?: T;
+                                url?: T;
+                              };
+                        };
+                  };
+              mode?: T;
+              items?: T;
+              id?: T;
+              blockName?: T;
+            };
         contact?:
           | T
           | {
@@ -1490,7 +2624,6 @@ export interface PagesSelect<T extends boolean = true> {
                     heading?:
                       | T
                       | {
-                          overline?: T;
                           title?: T;
                           subtitle?: T;
                           align?: T;
@@ -1523,6 +2656,178 @@ export interface PagesSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "QuoteBlock_select".
+ */
+export interface QuoteBlockSelect<T extends boolean = true> {
+  section?:
+    | T
+    | {
+        anchorId?: T;
+        background?: T;
+        heading?:
+          | T
+          | {
+              title?: T;
+              subtitle?: T;
+              align?: T;
+              hasAction?: T;
+              action?:
+                | T
+                | {
+                    type?: T;
+                    newTab?: T;
+                    label?: T;
+                    page?: T;
+                    anchor?: T;
+                    url?: T;
+                  };
+            };
+      };
+  text?: T;
+  description?: T;
+  align?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ListBlock_select".
+ */
+export interface ListBlockSelect<T extends boolean = true> {
+  section?:
+    | T
+    | {
+        anchorId?: T;
+        background?: T;
+        heading?:
+          | T
+          | {
+              title?: T;
+              subtitle?: T;
+              align?: T;
+              hasAction?: T;
+              action?:
+                | T
+                | {
+                    type?: T;
+                    newTab?: T;
+                    label?: T;
+                    page?: T;
+                    anchor?: T;
+                    url?: T;
+                  };
+            };
+      };
+  heading?: T;
+  intro?: T;
+  style?: T;
+  columns?: T;
+  items?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "GridListBlock_select".
+ */
+export interface GridListBlockSelect<T extends boolean = true> {
+  section?:
+    | T
+    | {
+        anchorId?: T;
+        background?: T;
+        heading?:
+          | T
+          | {
+              title?: T;
+              subtitle?: T;
+              align?: T;
+              hasAction?: T;
+              action?:
+                | T
+                | {
+                    type?: T;
+                    newTab?: T;
+                    label?: T;
+                    page?: T;
+                    anchor?: T;
+                    url?: T;
+                  };
+            };
+      };
+  heading?: T;
+  intro?: T;
+  columns?: T;
+  items?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CTABlock_select".
+ */
+export interface CTABlockSelect<T extends boolean = true> {
+  section?:
+    | T
+    | {
+        anchorId?: T;
+        background?: T;
+        heading?:
+          | T
+          | {
+              title?: T;
+              subtitle?: T;
+              align?: T;
+              hasAction?: T;
+              action?:
+                | T
+                | {
+                    type?: T;
+                    newTab?: T;
+                    label?: T;
+                    page?: T;
+                    anchor?: T;
+                    url?: T;
+                  };
+            };
+      };
+  size?: T;
+  backgroundImage?: T;
+  icon?: T;
+  title?: T;
+  text?: T;
+  links?:
+    | T
+    | {
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              label?: T;
+              page?: T;
+              anchor?: T;
+              url?: T;
+              appearance?: T;
+            };
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1594,6 +2899,20 @@ export interface PengurusSelect<T extends boolean = true> {
   photo?: T;
   bio?: T;
   active?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "testimonials_select".
+ */
+export interface TestimonialsSelect<T extends boolean = true> {
+  _order?: T;
+  quote?: T;
+  name?: T;
+  detail?: T;
+  role?: T;
+  photo?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1930,6 +3249,54 @@ export interface Navigation {
           type?: ('page' | 'external') | null;
           newTab?: boolean | null;
           label: string;
+          /**
+           * Published pages only.
+           */
+          page?: (number | null) | Page;
+          /**
+           * Section anchor ID (optional)
+           */
+          anchor?: string | null;
+          url?: string | null;
+        };
+        /**
+         * Also shows this link beside the menu button on large screens (at most 5).
+         */
+        showInBar?: boolean | null;
+        children?:
+          | {
+              link: {
+                type?: ('page' | 'external') | null;
+                newTab?: boolean | null;
+                label: string;
+                /**
+                 * Published pages only.
+                 */
+                page?: (number | null) | Page;
+                /**
+                 * Section anchor ID (optional)
+                 */
+                anchor?: string | null;
+                url?: string | null;
+              };
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Smaller links beside the main menu.
+   */
+  secondaryLinks?:
+    | {
+        link: {
+          type?: ('page' | 'external') | null;
+          newTab?: boolean | null;
+          label: string;
+          /**
+           * Published pages only.
+           */
           page?: (number | null) | Page;
           /**
            * Section anchor ID (optional)
@@ -1940,11 +3307,42 @@ export interface Navigation {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Titled groups under the secondary links, e.g. "Unit Sekolah".
+   */
+  linkGroups?:
+    | {
+        title: string;
+        links?:
+          | {
+              link: {
+                type?: ('page' | 'external') | null;
+                newTab?: boolean | null;
+                label: string;
+                /**
+                 * Published pages only.
+                 */
+                page?: (number | null) | Page;
+                /**
+                 * Section anchor ID (optional)
+                 */
+                anchor?: string | null;
+                url?: string | null;
+              };
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
   hasHeaderButton?: boolean | null;
   headerButton?: {
     type?: ('page' | 'external') | null;
     newTab?: boolean | null;
     label: string;
+    /**
+     * Published pages only.
+     */
     page?: (number | null) | Page;
     /**
      * Section anchor ID (optional)
@@ -1952,6 +3350,10 @@ export interface Navigation {
     anchor?: string | null;
     url?: string | null;
   };
+  /**
+   * Shown on every page. Leave empty for none.
+   */
+  footerBlocks?: CTABlock[] | null;
   footerColumns?:
     | {
         title: string;
@@ -1961,6 +3363,9 @@ export interface Navigation {
                 type?: ('page' | 'external') | null;
                 newTab?: boolean | null;
                 label: string;
+                /**
+                 * Published pages only.
+                 */
                 page?: (number | null) | Page;
                 /**
                  * Section anchor ID (optional)
@@ -2043,6 +3448,58 @@ export interface NavigationSelect<T extends boolean = true> {
               anchor?: T;
               url?: T;
             };
+        showInBar?: T;
+        children?:
+          | T
+          | {
+              link?:
+                | T
+                | {
+                    type?: T;
+                    newTab?: T;
+                    label?: T;
+                    page?: T;
+                    anchor?: T;
+                    url?: T;
+                  };
+              id?: T;
+            };
+        id?: T;
+      };
+  secondaryLinks?:
+    | T
+    | {
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              label?: T;
+              page?: T;
+              anchor?: T;
+              url?: T;
+            };
+        id?: T;
+      };
+  linkGroups?:
+    | T
+    | {
+        title?: T;
+        links?:
+          | T
+          | {
+              link?:
+                | T
+                | {
+                    type?: T;
+                    newTab?: T;
+                    label?: T;
+                    page?: T;
+                    anchor?: T;
+                    url?: T;
+                  };
+              id?: T;
+            };
         id?: T;
       };
   hasHeaderButton?: T;
@@ -2055,6 +3512,11 @@ export interface NavigationSelect<T extends boolean = true> {
         page?: T;
         anchor?: T;
         url?: T;
+      };
+  footerBlocks?:
+    | T
+    | {
+        cta?: T | CTABlockSelect<T>;
       };
   footerColumns?:
     | T

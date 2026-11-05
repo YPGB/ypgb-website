@@ -23,6 +23,9 @@ importers:
       '@payloadcms/plugin-form-builder':
         specifier: 3.90.2
         version: 3.90.2(@types/react@19.2.14)(monaco-editor@0.57.0)(next@16.3.3(@babel/core@7.29.7(supports-color@7.2.0))(@playwright/test@1.58.2)(@types/node@22.19.9)(babel-plugin-macros@3.1.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(sass@1.77.4))(payload@3.90.2(graphql@16.14.2)(supports-color@7.2.0)(typescript@5.7.3))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(supports-color@7.2.0)(typescript@5.7.3)
+      '@payloadcms/plugin-nested-docs':
+        specifier: 3.90.2
+        version: 3.90.2(payload@3.90.2(graphql@16.14.2)(supports-color@7.2.0)(typescript@5.7.3))
       '@payloadcms/plugin-seo':
         specifier: 3.90.2
         version: 3.90.2(@types/react@19.2.14)(monaco-editor@0.57.0)(next@16.3.3(@babel/core@7.29.7(supports-color@7.2.0))(@playwright/test@1.58.2)(@types/node@22.19.9)(babel-plugin-macros@3.1.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(sass@1.77.4))(payload@3.90.2(graphql@16.14.2)(supports-color@7.2.0)(typescript@5.7.3))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(supports-color@7.2.0)(typescript@5.7.3)
@@ -74,6 +77,9 @@ importers:
       react:
         specifier: 19.2.6
         version: 19.2.6
+      react-bootstrap-icons:
+        specifier: 1.11.6
+        version: 1.11.6(react@19.2.6)
       react-dom:
         specifier: 19.2.6
         version: 19.2.6(react@19.2.6)
@@ -1562,6 +1568,11 @@ packages:
       payload: 3.90.2
       react: ^19.0.1 || ^19.1.2 || ^19.2.1
       react-dom: ^19.0.1 || ^19.1.2 || ^19.2.1
+
+  '@payloadcms/plugin-nested-docs@3.90.2':
+    resolution: {integrity: sha512-LepTd9heeuvPpvTvawkYWu1MDL16Saev711A1/sX5K0lwJUrHi204WUor/lyo0LcApi3FD9MnyFJyJW3FAh5+g==}
+    peerDependencies:
+      payload: 3.90.2
 
   '@payloadcms/plugin-seo@3.90.2':
     resolution: {integrity: sha512-+7B8q3+pDsGO5JocwnIMUzpE7jgtmRyqZtZRbCWwLVQC7q5p6ZmB4zHwfUyJdmidJ+H7NoJueXHAy+R0ZRPwfA==}
@@ -4510,6 +4521,11 @@ packages:
     resolution: {integrity: sha512-K5zQjDllxWkf7Z5xJdV0/B0WTNqx6vxG70zJE4N0kBs4LovmEYWJzQGxC9bS9RAKu3bgM40lrd5zoLJ12MQ5BA==}
     engines: {node: '>= 0.10'}
 
+  react-bootstrap-icons@1.11.6:
+    resolution: {integrity: sha512-ycXiyeSyzbS1C4+MlPTYe0riB+UlZ7LV7YZQYqlERV2cxDiKtntI0huHmP/3VVvzPt4tGxqK0K+Y6g7We3U6tQ==}
+    peerDependencies:
+      react: '>=16.8.6'
+
   react-datepicker@7.6.0:
     resolution: {integrity: sha512-9cQH6Z/qa4LrGhzdc3XoHbhrxNcMi9MKjZmYgF/1MNNaJwvdSjv3Xd+jjvrEEbKEf71ZgCA3n7fQbdwd70qCRw==}
     peerDependencies:
@@ -6757,6 +6773,10 @@ snapshots:
       - next
       - supports-color
       - typescript
+
+  '@payloadcms/plugin-nested-docs@3.90.2(payload@3.90.2(graphql@16.14.2)(supports-color@7.2.0)(typescript@5.7.3))':
+    dependencies:
+      payload: 3.90.2(graphql@16.14.2)(supports-color@7.2.0)(typescript@5.7.3)
 
   '@payloadcms/plugin-seo@3.90.2(@types/react@19.2.14)(monaco-editor@0.57.0)(next@16.3.3(@babel/core@7.29.7(supports-color@7.2.0))(@playwright/test@1.58.2)(@types/node@22.19.9)(babel-plugin-macros@3.1.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(sass@1.77.4))(payload@3.90.2(graphql@16.14.2)(supports-color@7.2.0)(typescript@5.7.3))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(supports-color@7.2.0)(typescript@5.7.3)':
     dependencies:
@@ -9967,6 +9987,11 @@ snapshots:
       http-errors: 2.0.1
       iconv-lite: 0.7.3
       unpipe: 1.0.0
+
+  react-bootstrap-icons@1.11.6(react@19.2.6):
+    dependencies:
+      prop-types: 15.8.1
+      react: 19.2.6
 
   react-datepicker@7.6.0(react-dom@19.2.6(react@19.2.6))(react@19.2.6):
     dependencies:

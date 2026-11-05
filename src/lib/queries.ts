@@ -5,12 +5,14 @@ import { getPayload, type Where } from 'payload'
 import { cache } from 'react'
 
 import { NAVIGATION_TAG } from '@/globals/Navigation'
+import { pagePath } from '@/lib/preview'
 
 export const TAGS = {
   pages: 'pages',
   news: 'news',
   units: 'units',
   pengurus: 'pengurus',
+  testimonials: 'testimonials',
 } as const
 
 export const getPayloadClient = () => getPayload({ config })
@@ -44,18 +46,18 @@ export const getPage = cache(async (slug: string) =>
   (await isDraft()) ? findPage(slug, true) : findPageCached(slug),
 )
 
-export const getPageSlugs = unstable_cache(
+export const getPagePaths = unstable_cache(
   async () => {
     const { docs } = await (await getPayloadClient()).find({
       collection: 'pages',
       where: { _status: { equals: 'published' } },
-      select: { slug: true },
+      select: { slug: true, breadcrumbs: true },
       limit: 1000,
       pagination: false,
     })
-    return docs.map((d) => d.slug).filter((s): s is string => Boolean(s))
+    return docs.filter((d) => d.slug).map((d) => pagePath(d))
   },
-  ['page-slugs'],
+  ['page-paths'],
   { tags: [TAGS.pages] },
 )
 
@@ -150,4 +152,43 @@ export const getPengurus = unstable_cache(
   },
   ['pengurus'],
   { tags: [TAGS.pengurus] },
+)
+
+const findPageChildren = async (parentId: number, draft: boolean) => {
+  const { docs } = await (await getPayloadClient()).find({
+    collection: 'pages',
+    where: { parent: { equals: parentId } },
+    draft,
+    overrideAccess: draft,
+    select: { title: true, slug: true, breadcrumbs: true, hero: true },
+    sort: '_order',
+    depth: 1,
+    limit: 100,
+    pagination: false,
+  })
+  return docs
+}
+
+const findPageChildrenCached = unstable_cache((parentId: number) => findPageChildren(parentId, false), ['page-children'], {
+  tags: [TAGS.pages],
+})
+
+export const getPageChildren = cache(async (parentId: number) =>
+  (await isDraft()) ? findPageChildren(parentId, true) : findPageChildrenCached(parentId),
+)
+
+export const getTestimonials = unstable_cache(
+  async ({ ids }: { ids?: number[] }) =>
+    (
+      await (await getPayloadClient()).find({
+        collection: 'testimonials',
+        where: ids?.length ? { id: { in: ids } } : {},
+        sort: '_order',
+        limit: 100,
+        pagination: false,
+        depth: 1,
+      })
+    ).docs,
+  ['testimonials'],
+  { tags: [TAGS.testimonials] },
 )

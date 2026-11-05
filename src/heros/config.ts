@@ -2,7 +2,7 @@ import type { GroupField } from 'payload'
 
 import { links } from '@/fields/link'
 
-export const HERO_TYPES = ['none', 'split', 'centeredFull', 'centered', 'compact', 'minimal'] as const
+export const HERO_TYPES = ['none', 'split', 'centeredFull', 'centeredCarousel', 'centered', 'compact', 'minimal'] as const
 export type HeroType = (typeof HERO_TYPES)[number]
 
 const is =
@@ -24,6 +24,7 @@ export const hero: GroupField = {
         { label: 'None', value: 'none' },
         { label: 'Split — text beside image/carousel', value: 'split' },
         { label: 'Centered — full screen height', value: 'centeredFull' },
+        { label: 'Centered carousel — full screen height, image slideshow', value: 'centeredCarousel' },
         { label: 'Centered', value: 'centered' },
         { label: 'Compact — short title band', value: 'compact' },
         { label: 'Minimal — large title, no band', value: 'minimal' },
@@ -39,7 +40,18 @@ export const hero: GroupField = {
         { label: 'Brand deep', value: 'brandDeep' },
         { label: 'Warm (sand tint)', value: 'warm' },
       ],
-      admin: { condition: is('split', 'centeredFull', 'centered', 'compact') },
+      admin: { condition: is('split', 'centeredFull', 'centeredCarousel', 'centered', 'compact') },
+    },
+    {
+      name: 'size',
+      type: 'radio',
+      defaultValue: 'medium',
+      options: [
+        { label: 'Small', value: 'small' },
+        { label: 'Medium', value: 'medium' },
+        { label: 'Large', value: 'large' },
+      ],
+      admin: { layout: 'horizontal', condition: is('centered') },
     },
     {
       name: 'backgroundImage',
@@ -51,31 +63,23 @@ export const hero: GroupField = {
       },
     },
     {
-      type: 'row',
-      admin: { condition: is('split', 'centeredFull', 'centered', 'compact', 'minimal') },
-      fields: [
-        { name: 'overline', type: 'text', admin: { width: '35%', placeholder: 'Sejak 1973 · Pontianak' } },
-        { name: 'title', type: 'text', required: true, admin: { width: '65%' } },
-      ],
+      name: 'title',
+      type: 'text',
+      required: true,
+      admin: { condition: is('split', 'centeredFull', 'centeredCarousel', 'centered', 'compact', 'minimal') },
     },
     {
       name: 'lead',
       type: 'textarea',
-      admin: { condition: is('split', 'centeredFull', 'centered', 'compact', 'minimal') },
+      admin: { condition: is('split', 'centeredFull', 'centeredCarousel', 'centered', 'compact', 'minimal') },
     },
     {
-      name: 'showBreadcrumb',
-      type: 'checkbox',
-      defaultValue: true,
-      admin: { condition: is('compact') },
-    },
-    {
-      ...links({ maxRows: 2 }),
-      admin: { initCollapsed: true, condition: is('split', 'centeredFull', 'centered') },
+      ...links({ maxRows: 3 }),
+      admin: { initCollapsed: true, condition: is('split', 'centeredFull', 'centeredCarousel', 'centered') },
     },
     {
       type: 'row',
-      admin: { condition: is('split') },
+      admin: { condition: is('split', 'centeredCarousel') },
       fields: [
         {
           name: 'media',
@@ -95,7 +99,7 @@ export const hero: GroupField = {
             { label: 'Image left', value: 'left' },
             { label: 'Image right', value: 'right' },
           ],
-          admin: { width: '30%' },
+          admin: { width: '30%', condition: is('split') },
         },
       ],
     },

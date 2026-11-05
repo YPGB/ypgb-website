@@ -1,10 +1,11 @@
 import { formBuilderPlugin } from '@payloadcms/plugin-form-builder'
+import { nestedDocsPlugin } from '@payloadcms/plugin-nested-docs'
 import { seoPlugin } from '@payloadcms/plugin-seo'
 import type { Block, Plugin } from 'payload'
 
 import { admin, anyone } from '@/access'
 import type { Media, News, Page } from '@/payload-types'
-import { pathFor } from '@/lib/preview'
+import { newsPath, pagePath } from '@/lib/preview'
 
 const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'
 
@@ -30,6 +31,11 @@ const phoneField: Block = {
 }
 
 export const plugins: Plugin[] = [
+  nestedDocsPlugin({
+    collections: ['pages'],
+    generateLabel: (_, doc) => String(doc.title ?? ''),
+    generateURL: (docs) => docs.reduce((url, doc) => `${url}/${doc.slug}`, ''),
+  }),
   seoPlugin({
     collections: ['pages', 'news'],
     uploadsCollection: 'media',
@@ -44,7 +50,7 @@ export const plugins: Plugin[] = [
       return (typeof img === 'object' ? (img as Media | null)?.id : img) ?? ''
     },
     generateURL: ({ doc, collectionSlug }) =>
-      `${serverUrl}${pathFor(collectionSlug as 'pages' | 'news', (doc as Page).slug)}`,
+      `${serverUrl}${collectionSlug === 'news' ? newsPath((doc as News).slug) : pagePath(doc as Page)}`,
   }),
   formBuilderPlugin({
     fields: {

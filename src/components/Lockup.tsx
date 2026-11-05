@@ -6,25 +6,18 @@ import type { SiteSetting } from '@/payload-types'
 type Props = {
   settings: SiteSetting
   size?: 'sm' | 'md'
-  /** On dark grounds the seal sits on a white chip (its line art is dark ink). */
+  /** Prefer the optional "logo on dark" upload from Site Settings. */
   onDark?: boolean
   className?: string
 }
 
 export function Lockup({ settings, size = 'sm', onDark = true, className }: Props) {
   const logo = (onDark && mediaUrl(settings.logoOnDark)) || mediaUrl(settings.logo) || FALLBACK_LOGO
-  const chip = onDark && !mediaUrl(settings.logoOnDark)
   return (
     <span className={cn('inline-flex min-w-0 items-center gap-2.5', className)}>
-      <span
-        className={cn(
-          'flex shrink-0 items-center justify-center',
-          size === 'sm' ? 'size-9 sm:size-10' : 'size-14',
-          chip && 'overflow-hidden rounded-full bg-white p-0.5 shadow-sm',
-        )}
-      >
-        <img src={logo} alt="" className="size-full object-contain" width={56} height={56} />
-      </span>
+      {/* Original shape at a fixed height; the width follows the file. */}
+      <img src={logo} alt="" className={cn('w-auto shrink-0', size === 'sm' ? 'h-12' : 'h-14')} />
+
       <span className="flex min-w-0 flex-col leading-none">
         {settings.kicker && (
           <span
