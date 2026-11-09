@@ -14,7 +14,7 @@ export const limitAccentButtons: CollectionBeforeValidateHook = ({ data, collect
       collection: collection.slug,
       errors: [
         {
-          message: 'Only one "Accent" button is allowed per page. Change the others to Primary or Secondary.',
+          message: 'Only one "Accent" button is allowed per page. Change the others to another style, such as Primary, Outline or Soft.',
           path: 'hero',
         },
       ],

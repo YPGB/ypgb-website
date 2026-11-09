@@ -1,4 +1,6 @@
+import { Mail, Phone } from 'lucide-react'
 import NextLink from 'next/link'
+import { Whatsapp } from 'react-bootstrap-icons'
 
 import { RenderBlocks } from '@/blocks/RenderBlocks'
 import { CMSLink } from '@/components/CMSLink'
@@ -9,6 +11,7 @@ import { getNavigation } from '@/lib/queries'
 import { getSiteSettings } from '@/lib/site-settings'
 
 const hover = 'transition-colors hover:text-wheat-300'
+const contactLink = 'inline-flex w-fit items-center gap-2 break-all'
 
 export async function Footer() {
   const [nav, settings] = await Promise.all([getNavigation(), getSiteSettings()])
@@ -26,20 +29,46 @@ export async function Footer() {
               <Lockup settings={settings} size="md" />
             </NextLink>
             {settings.description && <p className="max-w-xs leading-relaxed">{settings.description}</p>}
-            {(settings.address || phones.length > 0 || settings.email) && (
+            {(settings.address || phones.length > 0 || settings.whatsapp || settings.email) && (
               <address className="flex max-w-xs flex-col gap-1.5 not-italic">
-                {settings.address && <p className="whitespace-pre-line">{settings.address}</p>}
+                {settings.address && <p className="mb-1.5 whitespace-pre-line">{settings.address}</p>}
                 {phones.map((phone) => (
-                  <a key={phone.id ?? phone.number} href={`tel:${phone.number.replace(/[^\d+]/g, '')}`} className={`w-fit ${hover}`}>
+                  <a
+                    key={phone.id ?? phone.number}
+                    href={`tel:${phone.number.replace(/[^\d+]/g, '')}`}
+                    className={`${contactLink} ${hover}`}
+                  >
+                    <Phone className="size-4 shrink-0" aria-hidden />
                     {phone.number}
                   </a>
                 ))}
+                {settings.whatsapp && (
+                  <a
+                    href={`https://wa.me/${settings.whatsapp}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`WhatsApp +${settings.whatsapp}`}
+                    className={`${contactLink} ${hover}`}
+                  >
+                    <Whatsapp className="size-4 shrink-0" aria-hidden />+{settings.whatsapp}
+                  </a>
+                )}
                 {settings.email && (
-                  <a href={`mailto:${settings.email}`} className={`w-fit ${hover}`}>
+                  <a href={`mailto:${settings.email}`} className={`${contactLink} ${hover}`}>
+                    <Mail className="size-4 shrink-0" aria-hidden />
                     {settings.email}
                   </a>
                 )}
               </address>
+            )}
+            {settings.mapEmbedUrl && (
+              <iframe
+                src={settings.mapEmbedUrl}
+                title={`Peta lokasi ${settings.name}`}
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                className="aspect-video w-full rounded-lg border-0 bg-white/10 lg:max-w-xs"
+              />
             )}
             {socials.length > 0 && (
               <ul className="flex flex-wrap gap-4.5">

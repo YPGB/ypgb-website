@@ -16,6 +16,6 @@ export const getSiteSettings = unstable_cache(
   { tags: [SITE_SETTINGS_TAG] },
 )
 
-export function mediaUrl(media: number | Media | null | undefined): string | undefined {
+export function mediaUrl(media: number | Pick<Media, 'url'> | null | undefined): string | undefined {
   return typeof media === 'object' && media?.url ? media.url : undefined
 }

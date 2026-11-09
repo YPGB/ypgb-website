@@ -25,6 +25,11 @@ export const ICONS = [
   'map-pin',
   'phone',
   'mail',
+  'message-circle',
+  'arrow-right',
+  'download',
+  'file-text',
+  'external-link',
 ] as const
 
 export type IconName = (typeof ICONS)[number]

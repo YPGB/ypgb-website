@@ -1,8 +1,17 @@
 import type { LinkData } from '@/components/CMSLink'
-import { personName } from '@/lib/format'
-import { newsPath, pagePath } from '@/lib/preview'
-import { getNewsList, getPageChildren, getPengurus, getTestimonials, getUnits } from '@/lib/queries'
-import type { Media, Page } from '@/payload-types'
+import type { MediaLike } from '@/components/Media'
+import { formatDate, personName } from '@/lib/format'
+import { albumPath, journalPath, newsPath, pagePath } from '@/lib/preview'
+import {
+  getAlbumList,
+  getJournalList,
+  getNewsList,
+  getPageChildren,
+  getPengurus,
+  getTestimonials,
+  getUnits,
+} from '@/lib/queries'
+import type { Page } from '@/payload-types'
 
 type CardGrid = Extract<NonNullable<Page['layout']>[number], { blockType: 'cardGrid' }>
 
@@ -11,7 +20,7 @@ export type CardData = {
   title: string
   text?: string | null
   icon?: NonNullable<CardGrid['cards']>[number]['icon']
-  image?: number | Media | null
+  image?: number | MediaLike | null
   link?: LinkData | null
 }
 
@@ -45,6 +54,25 @@ const fromCollection = async (block: CardGrid, pageId?: number): Promise<CardDat
       return (await getPengurus({})).map((p) => ({ id: p.id, title: personName(p), text: p.position, image: p.photo }))
     case 'testimonials':
       return (await getTestimonials({})).map((t) => ({ id: t.id, title: t.name, text: t.quote, image: t.photo }))
+    case 'journals':
+      return (await getJournalList()).map((j) => ({
+        id: j.id,
+        title: j.title,
+        text: j.issue,
+        image: j.coverImage,
+        link: internal(journalPath(j.slug)),
+      }))
+    case 'albums':
+      return (await getAlbumList()).map((a) => {
+        const photo = a.cover ?? a.photos?.[0]
+        return {
+          id: a.id,
+          title: a.title,
+          text: formatDate(a.publishedAt),
+          image: typeof photo === 'object' && photo ? { ...photo, alt: photo.alt || a.title } : null,
+          link: internal(albumPath(a.slug)),
+        }
+      })
     case 'subpages':
       if (!pageId) return []
       return (await getPageChildren(pageId)).map((p) => ({

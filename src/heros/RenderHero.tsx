@@ -42,7 +42,10 @@ function Lead({ text, className }: { text?: string | null; className?: string })
   )
 }
 
-function Split({ hero, overlaid }: { hero: Hero; overlaid?: boolean }) {
+/** `titleAs="p"`: the hero is shared and the page has its own main heading. */
+type TitleTag = 'h1' | 'p'
+
+function Split({ hero, overlaid, titleAs: Title = 'h1' }: { hero: Hero; overlaid?: boolean; titleAs?: TitleTag }) {
   const images = (hero.media ?? []).filter((m): m is MediaDoc => typeof m === 'object' && !!m?.url)
   const { className, ...rest } = toneProps(hero.background)
   return (
@@ -56,7 +59,7 @@ function Split({ hero, overlaid }: { hero: Hero; overlaid?: boolean }) {
         )}
       >
         <div className={cn('min-w-0', hero.mediaPosition === 'left' && 'md:order-2')}>
-          <h1 className="font-display text-h1 font-bold uppercase md:text-display-2">{hero.title}</h1>
+          <Title className="font-display text-h1 font-bold uppercase md:text-display-2">{hero.title}</Title>
           <Lead text={hero.lead} />
           <Buttons hero={hero} />
         </div>
@@ -77,7 +80,17 @@ const heights = {
   large: 'py-36 md:py-52',
 } as const
 
-function Centered({ hero, full, overlaid }: { hero: Hero; full: boolean; overlaid?: boolean }) {
+function Centered({
+  hero,
+  full,
+  overlaid,
+  titleAs: Title = 'h1',
+}: {
+  hero: Hero
+  full: boolean
+  overlaid?: boolean
+  titleAs?: TitleTag
+}) {
   const slides =
     hero.type === 'centeredCarousel'
       ? (hero.media ?? []).filter((m): m is MediaDoc => typeof m === 'object' && !!m?.url)
@@ -103,9 +116,9 @@ function Centered({ hero, full, overlaid }: { hero: Hero; full: boolean; overlai
       )}
       {/* Lets drags and clicks through to the slideshow behind; only the buttons stay interactive. */}
       <Container className={cn('flex flex-col items-center text-center', full && 'py-26', slides.length > 1 && 'pointer-events-none')}>
-        <h1 className="max-w-4xl font-display text-h1 font-bold uppercase md:text-display-2 lg:text-display-1">
+        <Title className="max-w-4xl font-display text-h1 font-bold uppercase md:text-display-2 lg:text-display-1">
           {hero.title}
-        </h1>
+        </Title>
         <Lead text={hero.lead} className="mx-auto" />
         <div className="pointer-events-auto">
           <Buttons hero={hero} center />
@@ -118,23 +131,23 @@ function Centered({ hero, full, overlaid }: { hero: Hero; full: boolean; overlai
   )
 }
 
-function Compact({ hero }: { hero: Hero }) {
+function Compact({ hero, titleAs: Title = 'h1' }: { hero: Hero; titleAs?: TitleTag }) {
   const { className, ...rest } = toneProps(hero.background)
   return (
     <section {...rest} className={cn(className, 'py-13 md:py-18')}>
       <Container>
-        <h1 className="text-[28px] leading-tight md:text-h1">{hero.title}</h1>
+        <Title className="font-heading text-[28px] leading-tight font-semibold text-balance md:text-h1">{hero.title}</Title>
         <Lead text={hero.lead} />
       </Container>
     </section>
   )
 }
 
-function Minimal({ hero }: { hero: Hero }) {
+function Minimal({ hero, titleAs: Title = 'h1' }: { hero: Hero; titleAs?: TitleTag }) {
   return (
     <section className="pt-9 last:pb-9 md:pt-13 [&+*]:pt-6.5 md:[&+*]:pt-9">
       <Container>
-        <h1 className="text-h1 md:text-display-2">{hero.title}</h1>
+        <Title className="font-heading text-h1 font-semibold text-balance md:text-display-2">{hero.title}</Title>
         <Lead text={hero.lead} className="text-muted-foreground opacity-100" />
       </Container>
     </section>
@@ -142,19 +155,27 @@ function Minimal({ hero }: { hero: Hero }) {
 }
 
 /** `overlaid`: the transparent header sits on top of this hero (home page only). */
-export function RenderHero({ hero, overlaid }: { hero?: Hero | null; overlaid?: boolean }) {
+export function RenderHero({
+  hero,
+  overlaid,
+  titleAs,
+}: {
+  hero?: Hero | null
+  overlaid?: boolean
+  titleAs?: TitleTag
+}) {
   switch (hero?.type) {
     case 'split':
-      return <Split hero={hero} overlaid={overlaid} />
+      return <Split hero={hero} overlaid={overlaid} titleAs={titleAs} />
     case 'centeredFull':
     case 'centeredCarousel':
-      return <Centered hero={hero} full overlaid={overlaid} />
+      return <Centered hero={hero} full overlaid={overlaid} titleAs={titleAs} />
     case 'centered':
-      return <Centered hero={hero} full={false} overlaid={overlaid} />
+      return <Centered hero={hero} full={false} overlaid={overlaid} titleAs={titleAs} />
     case 'compact':
-      return <Compact hero={hero} />
+      return <Compact hero={hero} titleAs={titleAs} />
     case 'minimal':
-      return <Minimal hero={hero} />
+      return <Minimal hero={hero} titleAs={titleAs} />
     default:
       return null
   }

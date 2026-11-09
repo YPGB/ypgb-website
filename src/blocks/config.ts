@@ -190,6 +190,8 @@ export const CardGridBlock: Block = {
             { label: 'Units', value: 'units' },
             { label: 'Pengurus', value: 'pengurus' },
             { label: 'Testimonials', value: 'testimonials' },
+            { label: 'Journals', value: 'journals' },
+            { label: 'Albums', value: 'albums' },
             { label: 'Subpages of this page', value: 'subpages' },
           ],
           admin: { width: '33%', condition: (_, s) => s?.source === 'collection' },
@@ -369,6 +371,28 @@ export const NewsListBlock: Block = {
   ],
 }
 
+export const DownloadsBlock: Block = {
+  slug: 'downloads',
+  labels: { singular: 'Downloads', plural: 'Downloads' },
+  fields: [
+    section(),
+    {
+      type: 'row',
+      fields: [
+        {
+          name: 'categories',
+          type: 'relationship',
+          relationTo: 'file-categories',
+          hasMany: true,
+          required: true,
+          admin: { width: '70%', description: 'Only files in these categories are listed. Two or more show filter chips.' },
+        },
+        { name: 'limit', type: 'number', label: 'Files per page', defaultValue: 10, min: 1, max: 50, admin: { width: '30%' } },
+      ],
+    },
+  ],
+}
+
 export const PengurusListBlock: Block = {
   slug: 'pengurusList',
   labels: { singular: 'Pengurus List', plural: 'Pengurus Lists' },
@@ -505,6 +529,44 @@ export const GridListBlock: Block = {
   ],
 }
 
+export const StatsBlock: Block = {
+  slug: 'stats',
+  interfaceName: 'StatsBlock',
+  labels: { singular: 'Stats', plural: 'Stats' },
+  fields: [
+    section({ nestable: true }),
+    ...blockHeading,
+    {
+      name: 'items',
+      type: 'array',
+      minRows: 2,
+      maxRows: 6,
+      required: true,
+      admin: {
+        initCollapsed: true,
+        description: 'Columns follow the number of items (up to 4 per row).',
+      },
+      fields: [
+        {
+          type: 'row',
+          fields: [
+            icon({ admin: { width: '25%' } }),
+            {
+              name: 'value',
+              type: 'text',
+              required: true,
+              admin: { width: '25%', description: 'Typed as shown, e.g. 2.861 or 1932.' },
+            },
+            { name: 'suffix', type: 'text', admin: { width: '15%', description: 'e.g. + or %' } },
+            { name: 'label', type: 'text', required: true, admin: { width: '35%' } },
+          ],
+        },
+        { name: 'description', type: 'textarea' },
+      ],
+    },
+  ],
+}
+
 export const TestimonialsBlock: Block = {
   slug: 'testimonials',
   labels: { singular: 'Testimonials', plural: 'Testimonials' },
@@ -538,11 +600,13 @@ const contentBlocks: Block[] = [
   QuoteBlock,
   ListBlock,
   GridListBlock,
+  StatsBlock,
   MediaTextBlock,
   CardGridBlock,
   CTABlock,
   UnitListBlock,
   NewsListBlock,
+  DownloadsBlock,
   PengurusListBlock,
   TestimonialsBlock,
   ContactBlock,

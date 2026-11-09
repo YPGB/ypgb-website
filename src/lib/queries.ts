@@ -6,6 +6,7 @@ import { cache } from 'react'
 
 import { NAVIGATION_TAG } from '@/globals/Navigation'
 import { pagePath } from '@/lib/preview'
+import type { Album, Journal, Prayer } from '@/payload-types'
 
 export const TAGS = {
   pages: 'pages',
@@ -13,6 +14,10 @@ export const TAGS = {
   units: 'units',
   pengurus: 'pengurus',
   testimonials: 'testimonials',
+  prayers: 'prayers',
+  files: 'files',
+  journals: 'journals',
+  albums: 'albums',
 } as const
 
 export const getPayloadClient = () => getPayload({ config })
@@ -175,6 +180,105 @@ const findPageChildrenCached = unstable_cache((parentId: number) => findPageChil
 
 export const getPageChildren = cache(async (parentId: number) =>
   (await isDraft()) ? findPageChildren(parentId, true) : findPageChildrenCached(parentId),
+)
+
+/** One document by slug: cached and published-only, or the latest draft in draft mode. */
+const bySlug = <T>(collection: 'prayers' | 'journals' | 'albums', tag: string) => {
+  const find = async (slug: string, draft: boolean) => {
+    const { docs } = await (await getPayloadClient()).find({
+      collection,
+      where: { slug: { equals: slug } },
+      draft,
+      overrideAccess: draft,
+      limit: 1,
+      depth: 2,
+    })
+    return (docs[0] ?? null) as T | null
+  }
+  const cached = unstable_cache((slug: string) => find(slug, false), [collection, 'by-slug'], { tags: [tag] })
+  return cache(async (slug: string) => ((await isDraft()) ? find(slug, true) : cached(slug)))
+}
+
+export const getPrayer = bySlug<Prayer>('prayers', TAGS.prayers)
+export const getJournal = bySlug<Journal>('journals', TAGS.journals)
+export const getAlbum = bySlug<Album>('albums', TAGS.albums)
+
+export const getPrayerList = unstable_cache(
+  async () =>
+    (
+      await (await getPayloadClient()).find({
+        collection: 'prayers',
+        where: { _status: { equals: 'published' } },
+        select: { name: true, slug: true },
+        sort: '_order',
+        limit: 1000,
+        pagination: false,
+      })
+    ).docs,
+  ['prayer-list'],
+  { tags: [TAGS.prayers] },
+)
+
+export const getJournalList = unstable_cache(
+  async () =>
+    (
+      await (await getPayloadClient()).find({
+        collection: 'journals',
+        where: { _status: { equals: 'published' } },
+        select: { title: true, slug: true, issue: true, coverImage: true },
+        sort: '-publishedAt',
+        limit: 100,
+        pagination: false,
+        depth: 1,
+      })
+    ).docs,
+  ['journal-list'],
+  { tags: [TAGS.journals] },
+)
+
+export const getAlbumList = unstable_cache(
+  async () =>
+    (
+      await (await getPayloadClient()).find({
+        collection: 'albums',
+        where: { _status: { equals: 'published' } },
+        select: { title: true, slug: true, publishedAt: true, cover: true, photos: true },
+        sort: '-publishedAt',
+        limit: 100,
+        pagination: false,
+        depth: 1,
+      })
+    ).docs,
+  ['album-list'],
+  { tags: [TAGS.albums] },
+)
+
+export const getFileList = unstable_cache(
+  async ({ limit, page, categoryIds }: { limit: number; page: number; categoryIds: number[] }) =>
+    (await getPayloadClient()).find({
+      collection: 'files',
+      where: { category: { in: categoryIds } },
+      sort: '-date',
+      limit,
+      page,
+      depth: 1,
+    }),
+  ['file-list'],
+  { tags: [TAGS.files] },
+)
+
+export const getFileCategories = unstable_cache(
+  async () =>
+    (
+      await (await getPayloadClient()).find({
+        collection: 'file-categories',
+        sort: 'title',
+        limit: 100,
+        pagination: false,
+      })
+    ).docs,
+  ['file-categories'],
+  { tags: [TAGS.files] },
 )
 
 export const getTestimonials = unstable_cache(

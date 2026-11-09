@@ -70,6 +70,12 @@ export interface Config {
     pages: Page;
     news: News;
     'news-categories': NewsCategory;
+    prayers: Prayer;
+    journals: Journal;
+    albums: Album;
+    'gallery-images': GalleryImage;
+    files: File;
+    'file-categories': FileCategory;
     units: Unit;
     pengurus: Pengurus;
     testimonials: Testimonial;
@@ -87,6 +93,12 @@ export interface Config {
     pages: PagesSelect<false> | PagesSelect<true>;
     news: NewsSelect<false> | NewsSelect<true>;
     'news-categories': NewsCategoriesSelect<false> | NewsCategoriesSelect<true>;
+    prayers: PrayersSelect<false> | PrayersSelect<true>;
+    journals: JournalsSelect<false> | JournalsSelect<true>;
+    albums: AlbumsSelect<false> | AlbumsSelect<true>;
+    'gallery-images': GalleryImagesSelect<false> | GalleryImagesSelect<true>;
+    files: FilesSelect<false> | FilesSelect<true>;
+    'file-categories': FileCategoriesSelect<false> | FileCategoriesSelect<true>;
     units: UnitsSelect<false> | UnitsSelect<true>;
     pengurus: PengurusSelect<false> | PengurusSelect<true>;
     testimonials: TestimonialsSelect<false> | TestimonialsSelect<true>;
@@ -183,7 +195,7 @@ export interface Page {
     links?:
       | {
           link: {
-            type?: ('page' | 'external') | null;
+            type?: ('page' | 'external' | 'file') | null;
             newTab?: boolean | null;
             label: string;
             /**
@@ -195,7 +207,60 @@ export interface Page {
              */
             anchor?: string | null;
             url?: string | null;
-            appearance?: ('primary' | 'secondary' | 'accent' | 'link') | null;
+            /**
+             * Downloads the file. Shows a download icon unless another icon is chosen.
+             */
+            file?: (number | null) | File;
+            appearance?:
+              | (
+                  | 'primary'
+                  | 'secondary'
+                  | 'soft'
+                  | 'ghost'
+                  | 'accent'
+                  | 'parchment'
+                  | 'brandDeep'
+                  | 'white'
+                  | 'black'
+                  | 'link'
+                )
+              | null;
+            /**
+             * Optional. Arrow always sits after the label.
+             */
+            icon?:
+              | (
+                  | 'graduation-cap'
+                  | 'school'
+                  | 'book-open-text'
+                  | 'library'
+                  | 'users'
+                  | 'user-round'
+                  | 'baby'
+                  | 'heart-handshake'
+                  | 'hand-heart'
+                  | 'church'
+                  | 'award'
+                  | 'trophy'
+                  | 'star'
+                  | 'sparkles'
+                  | 'lightbulb'
+                  | 'target'
+                  | 'eye'
+                  | 'calendar-days'
+                  | 'clock'
+                  | 'newspaper'
+                  | 'map-pin'
+                  | 'phone'
+                  | 'mail'
+                  | 'message-circle'
+                  | 'arrow-right'
+                  | 'download'
+                  | 'file-text'
+                  | 'external-link'
+                )
+              | null;
+            iconPosition?: ('before' | 'after') | null;
           };
           id?: string | null;
         }[]
@@ -221,7 +286,7 @@ export interface Page {
                 align?: ('left' | 'center') | null;
                 hasAction?: boolean | null;
                 action?: {
-                  type?: ('page' | 'external') | null;
+                  type?: ('page' | 'external' | 'file') | null;
                   newTab?: boolean | null;
                   label: string;
                   /**
@@ -233,6 +298,10 @@ export interface Page {
                    */
                   anchor?: string | null;
                   url?: string | null;
+                  /**
+                   * Downloads the file. Shows a download icon unless another icon is chosen.
+                   */
+                  file?: (number | null) | File;
                 };
               };
             };
@@ -255,7 +324,7 @@ export interface Page {
                         align?: ('left' | 'center') | null;
                         hasAction?: boolean | null;
                         action?: {
-                          type?: ('page' | 'external') | null;
+                          type?: ('page' | 'external' | 'file') | null;
                           newTab?: boolean | null;
                           label: string;
                           /**
@@ -267,6 +336,10 @@ export interface Page {
                            */
                           anchor?: string | null;
                           url?: string | null;
+                          /**
+                           * Downloads the file. Shows a download icon unless another icon is chosen.
+                           */
+                          file?: (number | null) | File;
                         };
                       };
                     };
@@ -303,7 +376,7 @@ export interface Page {
                         align?: ('left' | 'center') | null;
                         hasAction?: boolean | null;
                         action?: {
-                          type?: ('page' | 'external') | null;
+                          type?: ('page' | 'external' | 'file') | null;
                           newTab?: boolean | null;
                           label: string;
                           /**
@@ -315,6 +388,10 @@ export interface Page {
                            */
                           anchor?: string | null;
                           url?: string | null;
+                          /**
+                           * Downloads the file. Shows a download icon unless another icon is chosen.
+                           */
+                          file?: (number | null) | File;
                         };
                       };
                     };
@@ -344,6 +421,7 @@ export interface Page {
                 | QuoteBlock
                 | ListBlock
                 | GridListBlock
+                | StatsBlock
                 | {
                     section?: {
                       /**
@@ -357,7 +435,7 @@ export interface Page {
                         align?: ('left' | 'center') | null;
                         hasAction?: boolean | null;
                         action?: {
-                          type?: ('page' | 'external') | null;
+                          type?: ('page' | 'external' | 'file') | null;
                           newTab?: boolean | null;
                           label: string;
                           /**
@@ -369,6 +447,10 @@ export interface Page {
                            */
                           anchor?: string | null;
                           url?: string | null;
+                          /**
+                           * Downloads the file. Shows a download icon unless another icon is chosen.
+                           */
+                          file?: (number | null) | File;
                         };
                       };
                     };
@@ -392,7 +474,7 @@ export interface Page {
                     links?:
                       | {
                           link: {
-                            type?: ('page' | 'external') | null;
+                            type?: ('page' | 'external' | 'file') | null;
                             newTab?: boolean | null;
                             label: string;
                             /**
@@ -404,7 +486,60 @@ export interface Page {
                              */
                             anchor?: string | null;
                             url?: string | null;
-                            appearance?: ('primary' | 'secondary' | 'accent' | 'link') | null;
+                            /**
+                             * Downloads the file. Shows a download icon unless another icon is chosen.
+                             */
+                            file?: (number | null) | File;
+                            appearance?:
+                              | (
+                                  | 'primary'
+                                  | 'secondary'
+                                  | 'soft'
+                                  | 'ghost'
+                                  | 'accent'
+                                  | 'parchment'
+                                  | 'brandDeep'
+                                  | 'white'
+                                  | 'black'
+                                  | 'link'
+                                )
+                              | null;
+                            /**
+                             * Optional. Arrow always sits after the label.
+                             */
+                            icon?:
+                              | (
+                                  | 'graduation-cap'
+                                  | 'school'
+                                  | 'book-open-text'
+                                  | 'library'
+                                  | 'users'
+                                  | 'user-round'
+                                  | 'baby'
+                                  | 'heart-handshake'
+                                  | 'hand-heart'
+                                  | 'church'
+                                  | 'award'
+                                  | 'trophy'
+                                  | 'star'
+                                  | 'sparkles'
+                                  | 'lightbulb'
+                                  | 'target'
+                                  | 'eye'
+                                  | 'calendar-days'
+                                  | 'clock'
+                                  | 'newspaper'
+                                  | 'map-pin'
+                                  | 'phone'
+                                  | 'mail'
+                                  | 'message-circle'
+                                  | 'arrow-right'
+                                  | 'download'
+                                  | 'file-text'
+                                  | 'external-link'
+                                )
+                              | null;
+                            iconPosition?: ('before' | 'after') | null;
                           };
                           id?: string | null;
                         }[]
@@ -426,7 +561,7 @@ export interface Page {
                         align?: ('left' | 'center') | null;
                         hasAction?: boolean | null;
                         action?: {
-                          type?: ('page' | 'external') | null;
+                          type?: ('page' | 'external' | 'file') | null;
                           newTab?: boolean | null;
                           label: string;
                           /**
@@ -438,13 +573,18 @@ export interface Page {
                            */
                           anchor?: string | null;
                           url?: string | null;
+                          /**
+                           * Downloads the file. Shows a download icon unless another icon is chosen.
+                           */
+                          file?: (number | null) | File;
                         };
                       };
                     };
                     columns: '2' | '3' | '4';
                     style?: ('standard' | 'photo') | null;
                     source?: ('manual' | 'collection') | null;
-                    sourceCollection?: ('news' | 'units' | 'pengurus' | 'testimonials' | 'subpages') | null;
+                    sourceCollection?:
+                      ('news' | 'units' | 'pengurus' | 'testimonials' | 'journals' | 'albums' | 'subpages') | null;
                     /**
                      * Leave empty to show all.
                      */
@@ -476,6 +616,11 @@ export interface Page {
                                 | 'map-pin'
                                 | 'phone'
                                 | 'mail'
+                                | 'message-circle'
+                                | 'arrow-right'
+                                | 'download'
+                                | 'file-text'
+                                | 'external-link'
                               )
                             | null;
                           title: string;
@@ -483,7 +628,7 @@ export interface Page {
                           text?: string | null;
                           hasLink?: boolean | null;
                           link?: {
-                            type?: ('page' | 'external') | null;
+                            type?: ('page' | 'external' | 'file') | null;
                             newTab?: boolean | null;
                             label: string;
                             /**
@@ -495,6 +640,10 @@ export interface Page {
                              */
                             anchor?: string | null;
                             url?: string | null;
+                            /**
+                             * Downloads the file. Shows a download icon unless another icon is chosen.
+                             */
+                            file?: (number | null) | File;
                           };
                           id?: string | null;
                         }[]
@@ -517,7 +666,7 @@ export interface Page {
                         align?: ('left' | 'center') | null;
                         hasAction?: boolean | null;
                         action?: {
-                          type?: ('page' | 'external') | null;
+                          type?: ('page' | 'external' | 'file') | null;
                           newTab?: boolean | null;
                           label: string;
                           /**
@@ -529,6 +678,10 @@ export interface Page {
                            */
                           anchor?: string | null;
                           url?: string | null;
+                          /**
+                           * Downloads the file. Shows a download icon unless another icon is chosen.
+                           */
+                          file?: (number | null) | File;
                         };
                       };
                     };
@@ -556,7 +709,7 @@ export interface Page {
                         align?: ('left' | 'center') | null;
                         hasAction?: boolean | null;
                         action?: {
-                          type?: ('page' | 'external') | null;
+                          type?: ('page' | 'external' | 'file') | null;
                           newTab?: boolean | null;
                           label: string;
                           /**
@@ -568,6 +721,10 @@ export interface Page {
                            */
                           anchor?: string | null;
                           url?: string | null;
+                          /**
+                           * Downloads the file. Shows a download icon unless another icon is chosen.
+                           */
+                          file?: (number | null) | File;
                         };
                       };
                     };
@@ -599,7 +756,7 @@ export interface Page {
                         align?: ('left' | 'center') | null;
                         hasAction?: boolean | null;
                         action?: {
-                          type?: ('page' | 'external') | null;
+                          type?: ('page' | 'external' | 'file') | null;
                           newTab?: boolean | null;
                           label: string;
                           /**
@@ -611,6 +768,51 @@ export interface Page {
                            */
                           anchor?: string | null;
                           url?: string | null;
+                          /**
+                           * Downloads the file. Shows a download icon unless another icon is chosen.
+                           */
+                          file?: (number | null) | File;
+                        };
+                      };
+                    };
+                    /**
+                     * Only files in these categories are listed. Two or more show filter chips.
+                     */
+                    categories: (number | FileCategory)[];
+                    limit?: number | null;
+                    id?: string | null;
+                    blockName?: string | null;
+                    blockType: 'downloads';
+                  }
+                | {
+                    section?: {
+                      /**
+                       * Lowercase letters, numbers and dashes. Used by menu links (/#unit).
+                       */
+                      anchorId?: string | null;
+                      background?: ('page' | 'white' | 'warm' | 'brand' | 'brandDeep') | null;
+                      heading?: {
+                        title?: string | null;
+                        subtitle?: string | null;
+                        align?: ('left' | 'center') | null;
+                        hasAction?: boolean | null;
+                        action?: {
+                          type?: ('page' | 'external' | 'file') | null;
+                          newTab?: boolean | null;
+                          label: string;
+                          /**
+                           * Published pages only.
+                           */
+                          page?: (number | null) | Page;
+                          /**
+                           * Section anchor ID (optional)
+                           */
+                          anchor?: string | null;
+                          url?: string | null;
+                          /**
+                           * Downloads the file. Shows a download icon unless another icon is chosen.
+                           */
+                          file?: (number | null) | File;
                         };
                       };
                     };
@@ -636,7 +838,7 @@ export interface Page {
                         align?: ('left' | 'center') | null;
                         hasAction?: boolean | null;
                         action?: {
-                          type?: ('page' | 'external') | null;
+                          type?: ('page' | 'external' | 'file') | null;
                           newTab?: boolean | null;
                           label: string;
                           /**
@@ -648,6 +850,10 @@ export interface Page {
                            */
                           anchor?: string | null;
                           url?: string | null;
+                          /**
+                           * Downloads the file. Shows a download icon unless another icon is chosen.
+                           */
+                          file?: (number | null) | File;
                         };
                       };
                     };
@@ -670,7 +876,7 @@ export interface Page {
                         align?: ('left' | 'center') | null;
                         hasAction?: boolean | null;
                         action?: {
-                          type?: ('page' | 'external') | null;
+                          type?: ('page' | 'external' | 'file') | null;
                           newTab?: boolean | null;
                           label: string;
                           /**
@@ -682,6 +888,10 @@ export interface Page {
                            */
                           anchor?: string | null;
                           url?: string | null;
+                          /**
+                           * Downloads the file. Shows a download icon unless another icon is chosen.
+                           */
+                          file?: (number | null) | File;
                         };
                       };
                     };
@@ -711,7 +921,7 @@ export interface Page {
                 align?: ('left' | 'center') | null;
                 hasAction?: boolean | null;
                 action?: {
-                  type?: ('page' | 'external') | null;
+                  type?: ('page' | 'external' | 'file') | null;
                   newTab?: boolean | null;
                   label: string;
                   /**
@@ -723,6 +933,10 @@ export interface Page {
                    */
                   anchor?: string | null;
                   url?: string | null;
+                  /**
+                   * Downloads the file. Shows a download icon unless another icon is chosen.
+                   */
+                  file?: (number | null) | File;
                 };
               };
             };
@@ -759,7 +973,7 @@ export interface Page {
                 align?: ('left' | 'center') | null;
                 hasAction?: boolean | null;
                 action?: {
-                  type?: ('page' | 'external') | null;
+                  type?: ('page' | 'external' | 'file') | null;
                   newTab?: boolean | null;
                   label: string;
                   /**
@@ -771,6 +985,10 @@ export interface Page {
                    */
                   anchor?: string | null;
                   url?: string | null;
+                  /**
+                   * Downloads the file. Shows a download icon unless another icon is chosen.
+                   */
+                  file?: (number | null) | File;
                 };
               };
             };
@@ -800,6 +1018,7 @@ export interface Page {
         | QuoteBlock
         | ListBlock
         | GridListBlock
+        | StatsBlock
         | {
             section?: {
               /**
@@ -813,7 +1032,7 @@ export interface Page {
                 align?: ('left' | 'center') | null;
                 hasAction?: boolean | null;
                 action?: {
-                  type?: ('page' | 'external') | null;
+                  type?: ('page' | 'external' | 'file') | null;
                   newTab?: boolean | null;
                   label: string;
                   /**
@@ -825,6 +1044,10 @@ export interface Page {
                    */
                   anchor?: string | null;
                   url?: string | null;
+                  /**
+                   * Downloads the file. Shows a download icon unless another icon is chosen.
+                   */
+                  file?: (number | null) | File;
                 };
               };
             };
@@ -848,7 +1071,7 @@ export interface Page {
             links?:
               | {
                   link: {
-                    type?: ('page' | 'external') | null;
+                    type?: ('page' | 'external' | 'file') | null;
                     newTab?: boolean | null;
                     label: string;
                     /**
@@ -860,7 +1083,60 @@ export interface Page {
                      */
                     anchor?: string | null;
                     url?: string | null;
-                    appearance?: ('primary' | 'secondary' | 'accent' | 'link') | null;
+                    /**
+                     * Downloads the file. Shows a download icon unless another icon is chosen.
+                     */
+                    file?: (number | null) | File;
+                    appearance?:
+                      | (
+                          | 'primary'
+                          | 'secondary'
+                          | 'soft'
+                          | 'ghost'
+                          | 'accent'
+                          | 'parchment'
+                          | 'brandDeep'
+                          | 'white'
+                          | 'black'
+                          | 'link'
+                        )
+                      | null;
+                    /**
+                     * Optional. Arrow always sits after the label.
+                     */
+                    icon?:
+                      | (
+                          | 'graduation-cap'
+                          | 'school'
+                          | 'book-open-text'
+                          | 'library'
+                          | 'users'
+                          | 'user-round'
+                          | 'baby'
+                          | 'heart-handshake'
+                          | 'hand-heart'
+                          | 'church'
+                          | 'award'
+                          | 'trophy'
+                          | 'star'
+                          | 'sparkles'
+                          | 'lightbulb'
+                          | 'target'
+                          | 'eye'
+                          | 'calendar-days'
+                          | 'clock'
+                          | 'newspaper'
+                          | 'map-pin'
+                          | 'phone'
+                          | 'mail'
+                          | 'message-circle'
+                          | 'arrow-right'
+                          | 'download'
+                          | 'file-text'
+                          | 'external-link'
+                        )
+                      | null;
+                    iconPosition?: ('before' | 'after') | null;
                   };
                   id?: string | null;
                 }[]
@@ -882,7 +1158,7 @@ export interface Page {
                 align?: ('left' | 'center') | null;
                 hasAction?: boolean | null;
                 action?: {
-                  type?: ('page' | 'external') | null;
+                  type?: ('page' | 'external' | 'file') | null;
                   newTab?: boolean | null;
                   label: string;
                   /**
@@ -894,13 +1170,18 @@ export interface Page {
                    */
                   anchor?: string | null;
                   url?: string | null;
+                  /**
+                   * Downloads the file. Shows a download icon unless another icon is chosen.
+                   */
+                  file?: (number | null) | File;
                 };
               };
             };
             columns: '2' | '3' | '4';
             style?: ('standard' | 'photo') | null;
             source?: ('manual' | 'collection') | null;
-            sourceCollection?: ('news' | 'units' | 'pengurus' | 'testimonials' | 'subpages') | null;
+            sourceCollection?:
+              ('news' | 'units' | 'pengurus' | 'testimonials' | 'journals' | 'albums' | 'subpages') | null;
             /**
              * Leave empty to show all.
              */
@@ -932,6 +1213,11 @@ export interface Page {
                         | 'map-pin'
                         | 'phone'
                         | 'mail'
+                        | 'message-circle'
+                        | 'arrow-right'
+                        | 'download'
+                        | 'file-text'
+                        | 'external-link'
                       )
                     | null;
                   title: string;
@@ -939,7 +1225,7 @@ export interface Page {
                   text?: string | null;
                   hasLink?: boolean | null;
                   link?: {
-                    type?: ('page' | 'external') | null;
+                    type?: ('page' | 'external' | 'file') | null;
                     newTab?: boolean | null;
                     label: string;
                     /**
@@ -951,6 +1237,10 @@ export interface Page {
                      */
                     anchor?: string | null;
                     url?: string | null;
+                    /**
+                     * Downloads the file. Shows a download icon unless another icon is chosen.
+                     */
+                    file?: (number | null) | File;
                   };
                   id?: string | null;
                 }[]
@@ -973,7 +1263,7 @@ export interface Page {
                 align?: ('left' | 'center') | null;
                 hasAction?: boolean | null;
                 action?: {
-                  type?: ('page' | 'external') | null;
+                  type?: ('page' | 'external' | 'file') | null;
                   newTab?: boolean | null;
                   label: string;
                   /**
@@ -985,6 +1275,10 @@ export interface Page {
                    */
                   anchor?: string | null;
                   url?: string | null;
+                  /**
+                   * Downloads the file. Shows a download icon unless another icon is chosen.
+                   */
+                  file?: (number | null) | File;
                 };
               };
             };
@@ -1012,7 +1306,7 @@ export interface Page {
                 align?: ('left' | 'center') | null;
                 hasAction?: boolean | null;
                 action?: {
-                  type?: ('page' | 'external') | null;
+                  type?: ('page' | 'external' | 'file') | null;
                   newTab?: boolean | null;
                   label: string;
                   /**
@@ -1024,6 +1318,10 @@ export interface Page {
                    */
                   anchor?: string | null;
                   url?: string | null;
+                  /**
+                   * Downloads the file. Shows a download icon unless another icon is chosen.
+                   */
+                  file?: (number | null) | File;
                 };
               };
             };
@@ -1055,7 +1353,7 @@ export interface Page {
                 align?: ('left' | 'center') | null;
                 hasAction?: boolean | null;
                 action?: {
-                  type?: ('page' | 'external') | null;
+                  type?: ('page' | 'external' | 'file') | null;
                   newTab?: boolean | null;
                   label: string;
                   /**
@@ -1067,6 +1365,51 @@ export interface Page {
                    */
                   anchor?: string | null;
                   url?: string | null;
+                  /**
+                   * Downloads the file. Shows a download icon unless another icon is chosen.
+                   */
+                  file?: (number | null) | File;
+                };
+              };
+            };
+            /**
+             * Only files in these categories are listed. Two or more show filter chips.
+             */
+            categories: (number | FileCategory)[];
+            limit?: number | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'downloads';
+          }
+        | {
+            section?: {
+              /**
+               * Lowercase letters, numbers and dashes. Used by menu links (/#unit).
+               */
+              anchorId?: string | null;
+              background?: ('page' | 'white' | 'warm' | 'brand' | 'brandDeep') | null;
+              heading?: {
+                title?: string | null;
+                subtitle?: string | null;
+                align?: ('left' | 'center') | null;
+                hasAction?: boolean | null;
+                action?: {
+                  type?: ('page' | 'external' | 'file') | null;
+                  newTab?: boolean | null;
+                  label: string;
+                  /**
+                   * Published pages only.
+                   */
+                  page?: (number | null) | Page;
+                  /**
+                   * Section anchor ID (optional)
+                   */
+                  anchor?: string | null;
+                  url?: string | null;
+                  /**
+                   * Downloads the file. Shows a download icon unless another icon is chosen.
+                   */
+                  file?: (number | null) | File;
                 };
               };
             };
@@ -1092,7 +1435,7 @@ export interface Page {
                 align?: ('left' | 'center') | null;
                 hasAction?: boolean | null;
                 action?: {
-                  type?: ('page' | 'external') | null;
+                  type?: ('page' | 'external' | 'file') | null;
                   newTab?: boolean | null;
                   label: string;
                   /**
@@ -1104,6 +1447,10 @@ export interface Page {
                    */
                   anchor?: string | null;
                   url?: string | null;
+                  /**
+                   * Downloads the file. Shows a download icon unless another icon is chosen.
+                   */
+                  file?: (number | null) | File;
                 };
               };
             };
@@ -1126,7 +1473,7 @@ export interface Page {
                 align?: ('left' | 'center') | null;
                 hasAction?: boolean | null;
                 action?: {
-                  type?: ('page' | 'external') | null;
+                  type?: ('page' | 'external' | 'file') | null;
                   newTab?: boolean | null;
                   label: string;
                   /**
@@ -1138,6 +1485,10 @@ export interface Page {
                    */
                   anchor?: string | null;
                   url?: string | null;
+                  /**
+                   * Downloads the file. Shows a download icon unless another icon is chosen.
+                   */
+                  file?: (number | null) | File;
                 };
               };
             };
@@ -1210,6 +1561,55 @@ export interface Media {
   };
 }
 /**
+ * Semua file dapat diakses publik. Jangan mengunggah dokumen internal atau data pribadi.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "files".
+ */
+export interface File {
+  id: number;
+  title: string;
+  category: number | FileCategory;
+  date: string;
+  description?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+  sizes?: {
+    thumbnail?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+  };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "file-categories".
+ */
+export interface FileCategory {
+  id: number;
+  title: string;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "QuoteBlock".
  */
@@ -1226,7 +1626,7 @@ export interface QuoteBlock {
       align?: ('left' | 'center') | null;
       hasAction?: boolean | null;
       action?: {
-        type?: ('page' | 'external') | null;
+        type?: ('page' | 'external' | 'file') | null;
         newTab?: boolean | null;
         label: string;
         /**
@@ -1238,6 +1638,10 @@ export interface QuoteBlock {
          */
         anchor?: string | null;
         url?: string | null;
+        /**
+         * Downloads the file. Shows a download icon unless another icon is chosen.
+         */
+        file?: (number | null) | File;
       };
     };
   };
@@ -1271,7 +1675,7 @@ export interface ListBlock {
       align?: ('left' | 'center') | null;
       hasAction?: boolean | null;
       action?: {
-        type?: ('page' | 'external') | null;
+        type?: ('page' | 'external' | 'file') | null;
         newTab?: boolean | null;
         label: string;
         /**
@@ -1283,6 +1687,10 @@ export interface ListBlock {
          */
         anchor?: string | null;
         url?: string | null;
+        /**
+         * Downloads the file. Shows a download icon unless another icon is chosen.
+         */
+        file?: (number | null) | File;
       };
     };
   };
@@ -1315,7 +1723,7 @@ export interface GridListBlock {
       align?: ('left' | 'center') | null;
       hasAction?: boolean | null;
       action?: {
-        type?: ('page' | 'external') | null;
+        type?: ('page' | 'external' | 'file') | null;
         newTab?: boolean | null;
         label: string;
         /**
@@ -1327,6 +1735,10 @@ export interface GridListBlock {
          */
         anchor?: string | null;
         url?: string | null;
+        /**
+         * Downloads the file. Shows a download icon unless another icon is chosen.
+         */
+        file?: (number | null) | File;
       };
     };
   };
@@ -1341,6 +1753,96 @@ export interface GridListBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'gridList';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "StatsBlock".
+ */
+export interface StatsBlock {
+  section?: {
+    /**
+     * Lowercase letters, numbers and dashes. Used by menu links (/#unit).
+     */
+    anchorId?: string | null;
+    background?: ('page' | 'white' | 'warm' | 'brand' | 'brandDeep') | null;
+    heading?: {
+      title?: string | null;
+      subtitle?: string | null;
+      align?: ('left' | 'center') | null;
+      hasAction?: boolean | null;
+      action?: {
+        type?: ('page' | 'external' | 'file') | null;
+        newTab?: boolean | null;
+        label: string;
+        /**
+         * Published pages only.
+         */
+        page?: (number | null) | Page;
+        /**
+         * Section anchor ID (optional)
+         */
+        anchor?: string | null;
+        url?: string | null;
+        /**
+         * Downloads the file. Shows a download icon unless another icon is chosen.
+         */
+        file?: (number | null) | File;
+      };
+    };
+  };
+  heading?: string | null;
+  intro?: string | null;
+  /**
+   * Columns follow the number of items (up to 4 per row).
+   */
+  items: {
+    icon?:
+      | (
+          | 'graduation-cap'
+          | 'school'
+          | 'book-open-text'
+          | 'library'
+          | 'users'
+          | 'user-round'
+          | 'baby'
+          | 'heart-handshake'
+          | 'hand-heart'
+          | 'church'
+          | 'award'
+          | 'trophy'
+          | 'star'
+          | 'sparkles'
+          | 'lightbulb'
+          | 'target'
+          | 'eye'
+          | 'calendar-days'
+          | 'clock'
+          | 'newspaper'
+          | 'map-pin'
+          | 'phone'
+          | 'mail'
+          | 'message-circle'
+          | 'arrow-right'
+          | 'download'
+          | 'file-text'
+          | 'external-link'
+        )
+      | null;
+    /**
+     * Typed as shown, e.g. 2.861 or 1932.
+     */
+    value: string;
+    /**
+     * e.g. + or %
+     */
+    suffix?: string | null;
+    label: string;
+    description?: string | null;
+    id?: string | null;
+  }[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'stats';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1359,7 +1861,7 @@ export interface CTABlock {
       align?: ('left' | 'center') | null;
       hasAction?: boolean | null;
       action?: {
-        type?: ('page' | 'external') | null;
+        type?: ('page' | 'external' | 'file') | null;
         newTab?: boolean | null;
         label: string;
         /**
@@ -1371,6 +1873,10 @@ export interface CTABlock {
          */
         anchor?: string | null;
         url?: string | null;
+        /**
+         * Downloads the file. Shows a download icon unless another icon is chosen.
+         */
+        file?: (number | null) | File;
       };
     };
   };
@@ -1407,6 +1913,11 @@ export interface CTABlock {
         | 'map-pin'
         | 'phone'
         | 'mail'
+        | 'message-circle'
+        | 'arrow-right'
+        | 'download'
+        | 'file-text'
+        | 'external-link'
       )
     | null;
   title: string;
@@ -1417,7 +1928,7 @@ export interface CTABlock {
   links?:
     | {
         link: {
-          type?: ('page' | 'external') | null;
+          type?: ('page' | 'external' | 'file') | null;
           newTab?: boolean | null;
           label: string;
           /**
@@ -1429,7 +1940,60 @@ export interface CTABlock {
            */
           anchor?: string | null;
           url?: string | null;
-          appearance?: ('primary' | 'secondary' | 'accent' | 'link') | null;
+          /**
+           * Downloads the file. Shows a download icon unless another icon is chosen.
+           */
+          file?: (number | null) | File;
+          appearance?:
+            | (
+                | 'primary'
+                | 'secondary'
+                | 'soft'
+                | 'ghost'
+                | 'accent'
+                | 'parchment'
+                | 'brandDeep'
+                | 'white'
+                | 'black'
+                | 'link'
+              )
+            | null;
+          /**
+           * Optional. Arrow always sits after the label.
+           */
+          icon?:
+            | (
+                | 'graduation-cap'
+                | 'school'
+                | 'book-open-text'
+                | 'library'
+                | 'users'
+                | 'user-round'
+                | 'baby'
+                | 'heart-handshake'
+                | 'hand-heart'
+                | 'church'
+                | 'award'
+                | 'trophy'
+                | 'star'
+                | 'sparkles'
+                | 'lightbulb'
+                | 'target'
+                | 'eye'
+                | 'calendar-days'
+                | 'clock'
+                | 'newspaper'
+                | 'map-pin'
+                | 'phone'
+                | 'mail'
+                | 'message-circle'
+                | 'arrow-right'
+                | 'download'
+                | 'file-text'
+                | 'external-link'
+              )
+            | null;
+          iconPosition?: ('before' | 'after') | null;
         };
         id?: string | null;
       }[]
@@ -1634,6 +2198,14 @@ export interface Form {
             blockName?: string | null;
             blockType: 'phone';
           }
+        | {
+            name: string;
+            label?: string | null;
+            width?: number | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'unit';
+          }
       )[]
     | null;
   submitButtonLabel?: string | null;
@@ -1689,6 +2261,175 @@ export interface Form {
     | null;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * Drag rows to set the order in the prayer sidebar.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "prayers".
+ */
+export interface Prayer {
+  id: number;
+  _order?: string | null;
+  name: string;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  prayer: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  meta?: {
+    title?: string | null;
+    description?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (number | null) | Media;
+  };
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "journals".
+ */
+export interface Journal {
+  id: number;
+  title: string;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  publishedAt: string;
+  issue?: string | null;
+  issn?: string | null;
+  coverImage?: (number | null) | Media;
+  abstract?: string | null;
+  pdf: number | File;
+  /**
+   * Optional table of contents. Clicking an article opens the viewer at its start page.
+   */
+  articles?:
+    | {
+        title: string;
+        authors?: string | null;
+        page: number;
+        id?: string | null;
+      }[]
+    | null;
+  meta?: {
+    title?: string | null;
+    description?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (number | null) | Media;
+  };
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "albums".
+ */
+export interface Album {
+  id: number;
+  title: string;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  publishedAt: string;
+  unit?: (number | null) | Unit;
+  /**
+   * Optional. When empty, the first photo is used.
+   */
+  cover?: (number | null) | GalleryImage;
+  /**
+   * Up to 15 chosen photos. Put the full album in the link below.
+   */
+  photos: (number | GalleryImage)[];
+  /**
+   * Optional link to the full album, e.g. a Google Drive folder. Shown as "Lihat Semua Foto".
+   */
+  moreUrl?: string | null;
+  meta?: {
+    title?: string | null;
+    description?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (number | null) | Media;
+  };
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "gallery-images".
+ */
+export interface GalleryImage {
+  id: number;
+  /**
+   * Optional. When empty, the album title and photo number are used.
+   */
+  alt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+  sizes?: {
+    thumbnail?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    card?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    large?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+  };
 }
 /**
  * Drag rows to set the display order.
@@ -1762,6 +2503,10 @@ export interface FormSubmission {
         id?: string | null;
       }[]
     | null;
+  /**
+   * From the Unit form field, for filtering. Empty means Yayasan / Umum.
+   */
+  unit?: (number | null) | Unit;
   updatedAt: string;
   createdAt: string;
 }
@@ -1800,6 +2545,30 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'news-categories';
         value: number | NewsCategory;
+      } | null)
+    | ({
+        relationTo: 'prayers';
+        value: number | Prayer;
+      } | null)
+    | ({
+        relationTo: 'journals';
+        value: number | Journal;
+      } | null)
+    | ({
+        relationTo: 'albums';
+        value: number | Album;
+      } | null)
+    | ({
+        relationTo: 'gallery-images';
+        value: number | GalleryImage;
+      } | null)
+    | ({
+        relationTo: 'files';
+        value: number | File;
+      } | null)
+    | ({
+        relationTo: 'file-categories';
+        value: number | FileCategory;
       } | null)
     | ({
         relationTo: 'units';
@@ -1911,7 +2680,10 @@ export interface PagesSelect<T extends boolean = true> {
                     page?: T;
                     anchor?: T;
                     url?: T;
+                    file?: T;
                     appearance?: T;
+                    icon?: T;
+                    iconPosition?: T;
                   };
               id?: T;
             };
@@ -1945,6 +2717,7 @@ export interface PagesSelect<T extends boolean = true> {
                                 page?: T;
                                 anchor?: T;
                                 url?: T;
+                                file?: T;
                               };
                         };
                   };
@@ -1979,6 +2752,7 @@ export interface PagesSelect<T extends boolean = true> {
                                                   page?: T;
                                                   anchor?: T;
                                                   url?: T;
+                                                  file?: T;
                                                 };
                                           };
                                     };
@@ -2011,6 +2785,7 @@ export interface PagesSelect<T extends boolean = true> {
                                                   page?: T;
                                                   anchor?: T;
                                                   url?: T;
+                                                  file?: T;
                                                 };
                                           };
                                     };
@@ -2027,6 +2802,7 @@ export interface PagesSelect<T extends boolean = true> {
                           quote?: T | QuoteBlockSelect<T>;
                           list?: T | ListBlockSelect<T>;
                           gridList?: T | GridListBlockSelect<T>;
+                          stats?: T | StatsBlockSelect<T>;
                           mediaText?:
                             | T
                             | {
@@ -2051,6 +2827,7 @@ export interface PagesSelect<T extends boolean = true> {
                                                   page?: T;
                                                   anchor?: T;
                                                   url?: T;
+                                                  file?: T;
                                                 };
                                           };
                                     };
@@ -2069,7 +2846,10 @@ export interface PagesSelect<T extends boolean = true> {
                                             page?: T;
                                             anchor?: T;
                                             url?: T;
+                                            file?: T;
                                             appearance?: T;
+                                            icon?: T;
+                                            iconPosition?: T;
                                           };
                                       id?: T;
                                     };
@@ -2100,6 +2880,7 @@ export interface PagesSelect<T extends boolean = true> {
                                                   page?: T;
                                                   anchor?: T;
                                                   url?: T;
+                                                  file?: T;
                                                 };
                                           };
                                     };
@@ -2125,6 +2906,7 @@ export interface PagesSelect<T extends boolean = true> {
                                             page?: T;
                                             anchor?: T;
                                             url?: T;
+                                            file?: T;
                                           };
                                       id?: T;
                                     };
@@ -2156,6 +2938,7 @@ export interface PagesSelect<T extends boolean = true> {
                                                   page?: T;
                                                   anchor?: T;
                                                   url?: T;
+                                                  file?: T;
                                                 };
                                           };
                                     };
@@ -2190,6 +2973,7 @@ export interface PagesSelect<T extends boolean = true> {
                                                   page?: T;
                                                   anchor?: T;
                                                   url?: T;
+                                                  file?: T;
                                                 };
                                           };
                                     };
@@ -2198,6 +2982,39 @@ export interface PagesSelect<T extends boolean = true> {
                                 limit?: T;
                                 categories?: T;
                                 items?: T;
+                                id?: T;
+                                blockName?: T;
+                              };
+                          downloads?:
+                            | T
+                            | {
+                                section?:
+                                  | T
+                                  | {
+                                      anchorId?: T;
+                                      background?: T;
+                                      heading?:
+                                        | T
+                                        | {
+                                            title?: T;
+                                            subtitle?: T;
+                                            align?: T;
+                                            hasAction?: T;
+                                            action?:
+                                              | T
+                                              | {
+                                                  type?: T;
+                                                  newTab?: T;
+                                                  label?: T;
+                                                  page?: T;
+                                                  anchor?: T;
+                                                  url?: T;
+                                                  file?: T;
+                                                };
+                                          };
+                                    };
+                                categories?: T;
+                                limit?: T;
                                 id?: T;
                                 blockName?: T;
                               };
@@ -2225,6 +3042,7 @@ export interface PagesSelect<T extends boolean = true> {
                                                   page?: T;
                                                   anchor?: T;
                                                   url?: T;
+                                                  file?: T;
                                                 };
                                           };
                                     };
@@ -2257,6 +3075,7 @@ export interface PagesSelect<T extends boolean = true> {
                                                   page?: T;
                                                   anchor?: T;
                                                   url?: T;
+                                                  file?: T;
                                                 };
                                           };
                                     };
@@ -2289,6 +3108,7 @@ export interface PagesSelect<T extends boolean = true> {
                                                   page?: T;
                                                   anchor?: T;
                                                   url?: T;
+                                                  file?: T;
                                                 };
                                           };
                                     };
@@ -2327,6 +3147,7 @@ export interface PagesSelect<T extends boolean = true> {
                                 page?: T;
                                 anchor?: T;
                                 url?: T;
+                                file?: T;
                               };
                         };
                   };
@@ -2359,6 +3180,7 @@ export interface PagesSelect<T extends boolean = true> {
                                 page?: T;
                                 anchor?: T;
                                 url?: T;
+                                file?: T;
                               };
                         };
                   };
@@ -2375,6 +3197,7 @@ export interface PagesSelect<T extends boolean = true> {
         quote?: T | QuoteBlockSelect<T>;
         list?: T | ListBlockSelect<T>;
         gridList?: T | GridListBlockSelect<T>;
+        stats?: T | StatsBlockSelect<T>;
         mediaText?:
           | T
           | {
@@ -2399,6 +3222,7 @@ export interface PagesSelect<T extends boolean = true> {
                                 page?: T;
                                 anchor?: T;
                                 url?: T;
+                                file?: T;
                               };
                         };
                   };
@@ -2417,7 +3241,10 @@ export interface PagesSelect<T extends boolean = true> {
                           page?: T;
                           anchor?: T;
                           url?: T;
+                          file?: T;
                           appearance?: T;
+                          icon?: T;
+                          iconPosition?: T;
                         };
                     id?: T;
                   };
@@ -2448,6 +3275,7 @@ export interface PagesSelect<T extends boolean = true> {
                                 page?: T;
                                 anchor?: T;
                                 url?: T;
+                                file?: T;
                               };
                         };
                   };
@@ -2473,6 +3301,7 @@ export interface PagesSelect<T extends boolean = true> {
                           page?: T;
                           anchor?: T;
                           url?: T;
+                          file?: T;
                         };
                     id?: T;
                   };
@@ -2504,6 +3333,7 @@ export interface PagesSelect<T extends boolean = true> {
                                 page?: T;
                                 anchor?: T;
                                 url?: T;
+                                file?: T;
                               };
                         };
                   };
@@ -2538,6 +3368,7 @@ export interface PagesSelect<T extends boolean = true> {
                                 page?: T;
                                 anchor?: T;
                                 url?: T;
+                                file?: T;
                               };
                         };
                   };
@@ -2546,6 +3377,39 @@ export interface PagesSelect<T extends boolean = true> {
               limit?: T;
               categories?: T;
               items?: T;
+              id?: T;
+              blockName?: T;
+            };
+        downloads?:
+          | T
+          | {
+              section?:
+                | T
+                | {
+                    anchorId?: T;
+                    background?: T;
+                    heading?:
+                      | T
+                      | {
+                          title?: T;
+                          subtitle?: T;
+                          align?: T;
+                          hasAction?: T;
+                          action?:
+                            | T
+                            | {
+                                type?: T;
+                                newTab?: T;
+                                label?: T;
+                                page?: T;
+                                anchor?: T;
+                                url?: T;
+                                file?: T;
+                              };
+                        };
+                  };
+              categories?: T;
+              limit?: T;
               id?: T;
               blockName?: T;
             };
@@ -2573,6 +3437,7 @@ export interface PagesSelect<T extends boolean = true> {
                                 page?: T;
                                 anchor?: T;
                                 url?: T;
+                                file?: T;
                               };
                         };
                   };
@@ -2605,6 +3470,7 @@ export interface PagesSelect<T extends boolean = true> {
                                 page?: T;
                                 anchor?: T;
                                 url?: T;
+                                file?: T;
                               };
                         };
                   };
@@ -2637,6 +3503,7 @@ export interface PagesSelect<T extends boolean = true> {
                                 page?: T;
                                 anchor?: T;
                                 url?: T;
+                                file?: T;
                               };
                         };
                   };
@@ -2683,6 +3550,7 @@ export interface QuoteBlockSelect<T extends boolean = true> {
                     page?: T;
                     anchor?: T;
                     url?: T;
+                    file?: T;
                   };
             };
       };
@@ -2718,6 +3586,7 @@ export interface ListBlockSelect<T extends boolean = true> {
                     page?: T;
                     anchor?: T;
                     url?: T;
+                    file?: T;
                   };
             };
       };
@@ -2760,6 +3629,7 @@ export interface GridListBlockSelect<T extends boolean = true> {
                     page?: T;
                     anchor?: T;
                     url?: T;
+                    file?: T;
                   };
             };
       };
@@ -2770,6 +3640,51 @@ export interface GridListBlockSelect<T extends boolean = true> {
     | T
     | {
         title?: T;
+        description?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "StatsBlock_select".
+ */
+export interface StatsBlockSelect<T extends boolean = true> {
+  section?:
+    | T
+    | {
+        anchorId?: T;
+        background?: T;
+        heading?:
+          | T
+          | {
+              title?: T;
+              subtitle?: T;
+              align?: T;
+              hasAction?: T;
+              action?:
+                | T
+                | {
+                    type?: T;
+                    newTab?: T;
+                    label?: T;
+                    page?: T;
+                    anchor?: T;
+                    url?: T;
+                    file?: T;
+                  };
+            };
+      };
+  heading?: T;
+  intro?: T;
+  items?:
+    | T
+    | {
+        icon?: T;
+        value?: T;
+        suffix?: T;
+        label?: T;
         description?: T;
         id?: T;
       };
@@ -2802,6 +3717,7 @@ export interface CTABlockSelect<T extends boolean = true> {
                     page?: T;
                     anchor?: T;
                     url?: T;
+                    file?: T;
                   };
             };
       };
@@ -2822,7 +3738,10 @@ export interface CTABlockSelect<T extends boolean = true> {
               page?: T;
               anchor?: T;
               url?: T;
+              file?: T;
               appearance?: T;
+              icon?: T;
+              iconPosition?: T;
             };
         id?: T;
       };
@@ -2859,6 +3778,182 @@ export interface NewsSelect<T extends boolean = true> {
  * via the `definition` "news-categories_select".
  */
 export interface NewsCategoriesSelect<T extends boolean = true> {
+  title?: T;
+  generateSlug?: T;
+  slug?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "prayers_select".
+ */
+export interface PrayersSelect<T extends boolean = true> {
+  _order?: T;
+  name?: T;
+  generateSlug?: T;
+  slug?: T;
+  prayer?: T;
+  meta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "journals_select".
+ */
+export interface JournalsSelect<T extends boolean = true> {
+  title?: T;
+  generateSlug?: T;
+  slug?: T;
+  publishedAt?: T;
+  issue?: T;
+  issn?: T;
+  coverImage?: T;
+  abstract?: T;
+  pdf?: T;
+  articles?:
+    | T
+    | {
+        title?: T;
+        authors?: T;
+        page?: T;
+        id?: T;
+      };
+  meta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "albums_select".
+ */
+export interface AlbumsSelect<T extends boolean = true> {
+  title?: T;
+  generateSlug?: T;
+  slug?: T;
+  publishedAt?: T;
+  unit?: T;
+  cover?: T;
+  photos?: T;
+  moreUrl?: T;
+  meta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "gallery-images_select".
+ */
+export interface GalleryImagesSelect<T extends boolean = true> {
+  alt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+  sizes?:
+    | T
+    | {
+        thumbnail?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        card?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        large?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+      };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "files_select".
+ */
+export interface FilesSelect<T extends boolean = true> {
+  title?: T;
+  category?: T;
+  date?: T;
+  description?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+  sizes?:
+    | T
+    | {
+        thumbnail?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+      };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "file-categories_select".
+ */
+export interface FileCategoriesSelect<T extends boolean = true> {
   title?: T;
   generateSlug?: T;
   slug?: T;
@@ -3081,6 +4176,15 @@ export interface FormsSelect<T extends boolean = true> {
               id?: T;
               blockName?: T;
             };
+        unit?:
+          | T
+          | {
+              name?: T;
+              label?: T;
+              width?: T;
+              id?: T;
+              blockName?: T;
+            };
       };
   submitButtonLabel?: T;
   confirmationType?: T;
@@ -3120,6 +4224,7 @@ export interface FormSubmissionsSelect<T extends boolean = true> {
         value?: T;
         id?: T;
       };
+  unit?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -3208,6 +4313,10 @@ export interface SiteSetting {
    * Google Maps link to the address.
    */
   mapUrl?: string | null;
+  /**
+   * Shown in the footer. In Google Maps: Share > Embed a map > Copy HTML, then paste it here.
+   */
+  mapEmbedUrl?: string | null;
   email?: string | null;
   /**
    * Number in international format, e.g. 6281234567890.
@@ -3246,7 +4355,7 @@ export interface Navigation {
   headerItems?:
     | {
         link: {
-          type?: ('page' | 'external') | null;
+          type?: ('page' | 'external' | 'file') | null;
           newTab?: boolean | null;
           label: string;
           /**
@@ -3258,6 +4367,10 @@ export interface Navigation {
            */
           anchor?: string | null;
           url?: string | null;
+          /**
+           * Downloads the file. Shows a download icon unless another icon is chosen.
+           */
+          file?: (number | null) | File;
         };
         /**
          * Also shows this link beside the menu button on large screens (at most 5).
@@ -3266,7 +4379,7 @@ export interface Navigation {
         children?:
           | {
               link: {
-                type?: ('page' | 'external') | null;
+                type?: ('page' | 'external' | 'file') | null;
                 newTab?: boolean | null;
                 label: string;
                 /**
@@ -3278,6 +4391,10 @@ export interface Navigation {
                  */
                 anchor?: string | null;
                 url?: string | null;
+                /**
+                 * Downloads the file. Shows a download icon unless another icon is chosen.
+                 */
+                file?: (number | null) | File;
               };
               id?: string | null;
             }[]
@@ -3291,7 +4408,7 @@ export interface Navigation {
   secondaryLinks?:
     | {
         link: {
-          type?: ('page' | 'external') | null;
+          type?: ('page' | 'external' | 'file') | null;
           newTab?: boolean | null;
           label: string;
           /**
@@ -3303,6 +4420,10 @@ export interface Navigation {
            */
           anchor?: string | null;
           url?: string | null;
+          /**
+           * Downloads the file. Shows a download icon unless another icon is chosen.
+           */
+          file?: (number | null) | File;
         };
         id?: string | null;
       }[]
@@ -3316,7 +4437,7 @@ export interface Navigation {
         links?:
           | {
               link: {
-                type?: ('page' | 'external') | null;
+                type?: ('page' | 'external' | 'file') | null;
                 newTab?: boolean | null;
                 label: string;
                 /**
@@ -3328,6 +4449,10 @@ export interface Navigation {
                  */
                 anchor?: string | null;
                 url?: string | null;
+                /**
+                 * Downloads the file. Shows a download icon unless another icon is chosen.
+                 */
+                file?: (number | null) | File;
               };
               id?: string | null;
             }[]
@@ -3337,7 +4462,7 @@ export interface Navigation {
     | null;
   hasHeaderButton?: boolean | null;
   headerButton?: {
-    type?: ('page' | 'external') | null;
+    type?: ('page' | 'external' | 'file') | null;
     newTab?: boolean | null;
     label: string;
     /**
@@ -3349,6 +4474,10 @@ export interface Navigation {
      */
     anchor?: string | null;
     url?: string | null;
+    /**
+     * Downloads the file. Shows a download icon unless another icon is chosen.
+     */
+    file?: (number | null) | File;
   };
   /**
    * Shown on every page. Leave empty for none.
@@ -3360,7 +4489,7 @@ export interface Navigation {
         links?:
           | {
               link: {
-                type?: ('page' | 'external') | null;
+                type?: ('page' | 'external' | 'file') | null;
                 newTab?: boolean | null;
                 label: string;
                 /**
@@ -3372,6 +4501,10 @@ export interface Navigation {
                  */
                 anchor?: string | null;
                 url?: string | null;
+                /**
+                 * Downloads the file. Shows a download icon unless another icon is chosen.
+                 */
+                file?: (number | null) | File;
               };
               id?: string | null;
             }[]
@@ -3403,6 +4536,7 @@ export interface SiteSettingsSelect<T extends boolean = true> {
   foundedYear?: T;
   address?: T;
   mapUrl?: T;
+  mapEmbedUrl?: T;
   email?: T;
   whatsapp?: T;
   phones?:
@@ -3447,6 +4581,7 @@ export interface NavigationSelect<T extends boolean = true> {
               page?: T;
               anchor?: T;
               url?: T;
+              file?: T;
             };
         showInBar?: T;
         children?:
@@ -3461,6 +4596,7 @@ export interface NavigationSelect<T extends boolean = true> {
                     page?: T;
                     anchor?: T;
                     url?: T;
+                    file?: T;
                   };
               id?: T;
             };
@@ -3478,6 +4614,7 @@ export interface NavigationSelect<T extends boolean = true> {
               page?: T;
               anchor?: T;
               url?: T;
+              file?: T;
             };
         id?: T;
       };
@@ -3497,6 +4634,7 @@ export interface NavigationSelect<T extends boolean = true> {
                     page?: T;
                     anchor?: T;
                     url?: T;
+                    file?: T;
                   };
               id?: T;
             };
@@ -3512,6 +4650,7 @@ export interface NavigationSelect<T extends boolean = true> {
         page?: T;
         anchor?: T;
         url?: T;
+        file?: T;
       };
   footerBlocks?:
     | T
@@ -3534,6 +4673,7 @@ export interface NavigationSelect<T extends boolean = true> {
                     page?: T;
                     anchor?: T;
                     url?: T;
+                    file?: T;
                   };
               id?: T;
             };

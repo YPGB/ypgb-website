@@ -1,7 +1,9 @@
 import { ValidationError, type CollectionBeforeValidateHook } from 'payload'
 
-/** `/` has no path to nest under, and `/berita/*` belongs to the news article route. */
-export const ROOT_ONLY = ['home', 'berita']
+import { ALBUM_ROOT, JOURNAL_ROOT, PRAYER_ROOT } from '@/lib/preview'
+
+/** `/` has no path to nest under; the others have routes of their own for the URLs below them. */
+export const ROOT_ONLY = ['home', 'berita', PRAYER_ROOT, JOURNAL_ROOT, ALBUM_ROOT]
 
 const refuse = (message: string) => new ValidationError({ errors: [{ path: 'parent', message }] })
 

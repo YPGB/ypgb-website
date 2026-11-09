@@ -137,6 +137,20 @@ export const SiteSettings: GlobalConfig = {
               admin: { description: 'Google Maps link to the address.' },
             },
             {
+              name: 'mapEmbedUrl',
+              type: 'text',
+              label: 'Map embed',
+              admin: {
+                description: 'Shown in the footer. In Google Maps: Share > Embed a map > Copy HTML, then paste it here.',
+              },
+              hooks: {
+                // Keeps only the address from the pasted <iframe ...> code.
+                beforeValidate: [({ value }) => (typeof value === 'string' ? (value.match(/src="([^"]+)"/)?.[1] ?? value).trim() : value)],
+              },
+              validate: (value: null | string | undefined) =>
+                !value || value.startsWith('https://www.google.com/maps/embed') || 'Paste the code from Share > Embed a map in Google Maps.',
+            },
+            {
               type: 'row',
               fields: [
                 { name: 'email', type: 'email', admin: { width: '50%' } },

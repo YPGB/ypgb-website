@@ -13,3 +13,5 @@ playwright-report
 Dockerfile
 docker-compose.yml
 *.md
+files
+gallery-images

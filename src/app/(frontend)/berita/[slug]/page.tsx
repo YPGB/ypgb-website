@@ -76,7 +76,7 @@ export default async function Article({ params }: Props) {
                   <Media media={article.coverImage} sizes="(min-width: 768px) 720px, 100vw" priority />
                 </div>
               )}
-              <RichText data={article.content} className="text-base" />
+              <RichText data={article.content} />
             </div>
             <RelatedNews articleId={article.id} />
           </div>

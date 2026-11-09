@@ -11,12 +11,18 @@ const buttonVariants = cva(
         outline:
           "border-border bg-background hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground in-data-[tone=dark]:border-white/40 in-data-[tone=dark]:bg-white/10 in-data-[tone=dark]:text-brand-foreground in-data-[tone=dark]:hover:bg-white/20 dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
         accent: "bg-seal-600 text-white hover:bg-seal-700",
+        // Solid colors editors can pick; the light ones get a hairline so they still show on matching bands.
+        parchment: "border-border bg-background text-foreground hover:bg-wheat-100",
+        brandDeep:
+          "bg-brand-deep text-brand-foreground hover:bg-brand in-data-[tone=dark]:border-white/30",
+        white: "border-border bg-white text-foreground hover:bg-muted",
+        black: "bg-black text-white hover:bg-black/80 in-data-[tone=dark]:border-white/30",
         onbrand:
           "border-white/40 bg-white/10 text-brand-foreground hover:bg-white/20",
         secondary:
-          "bg-secondary text-secondary-foreground hover:bg-[color-mix(in_oklch,var(--secondary),var(--foreground)_5%)] aria-expanded:bg-secondary aria-expanded:text-secondary-foreground",
+          "bg-secondary text-secondary-foreground hover:bg-[color-mix(in_oklch,var(--secondary),var(--foreground)_5%)] aria-expanded:bg-secondary aria-expanded:text-secondary-foreground in-data-[tone=dark]:bg-white/15 in-data-[tone=dark]:text-brand-foreground in-data-[tone=dark]:hover:bg-white/25",
         ghost:
-          "hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground in-data-[tone=dark]:hover:bg-white/10 in-data-[tone=dark]:hover:text-brand-foreground dark:hover:bg-muted/50",
+          "hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground in-data-[tone=dark]:text-brand-foreground in-data-[tone=dark]:hover:bg-white/10 in-data-[tone=dark]:hover:text-brand-foreground dark:hover:bg-muted/50",
         destructive:
           "bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40",
         link: "h-auto px-0 text-foreground hover:text-seal-700 in-data-[tone=dark]:text-brand-foreground in-data-[tone=dark]:hover:text-wheat-300",

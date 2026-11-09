@@ -5,7 +5,7 @@ import {
   RichText as LexicalRichText,
 } from '@payloadcms/richtext-lexical/react'
 
-import { newsPath, pagePath } from '@/lib/preview'
+import { albumPath, journalPath, newsPath, pagePath, prayerPath } from '@/lib/preview'
 import { cn } from '@/lib/utils'
 
 import { blockConverters } from './richtext/blockConverters'
@@ -18,6 +18,9 @@ const converters: JSXConvertersFunction = ({ defaultConverters }) => ({
       const { relationTo, value } = linkNode.fields.doc ?? {}
       const doc = typeof value === 'object' ? (value as { slug?: string }) : null
       if (relationTo === 'news') return newsPath(doc?.slug)
+      if (relationTo === 'prayers') return prayerPath(doc?.slug)
+      if (relationTo === 'journals') return journalPath(doc?.slug)
+      if (relationTo === 'albums') return albumPath(doc?.slug)
       return pagePath(doc)
     },
   }),

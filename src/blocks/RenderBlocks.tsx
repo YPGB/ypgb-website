@@ -1,11 +1,11 @@
 import { Clock, Mail, MapPin, MessageCircle, Phone } from 'lucide-react'
 import NextLink from 'next/link'
-import type { ReactNode } from 'react'
 
 import { NewsCard } from '@/components/cards/NewsCard'
 import { PengurusCard } from '@/components/cards/PengurusCard'
 import { UnitCard } from '@/components/cards/UnitCard'
 import { CMSLink, resolveHref } from '@/components/CMSLink'
+import { CmsForm } from '@/components/forms/CmsForm'
 import { Icon } from '@/components/Icon'
 import { Media } from '@/components/Media'
 import { RichText } from '@/components/RichText'
@@ -19,6 +19,7 @@ import type { Page } from '@/payload-types'
 import { type CardData, getCards } from './cardData'
 import { containBlocks } from './contain'
 import { ContentGroupSection, NestedSection } from './ContentBlocks'
+import { DownloadsList } from './DownloadsList'
 import { type ArchiveParams, NewsArchive } from './NewsArchive'
 import { TabsClient } from './TabsClient'
 import { TestimonialCarousel } from './TestimonialCarousel'
@@ -56,7 +57,7 @@ function TabsSection({ block }: { block: B<'tabs'> }) {
   const items = (block.tabs ?? []).map((t, i) => ({
     id: t.id ?? String(i),
     label: t.label,
-    content: <RichText data={t.content} className="text-base" />,
+    content: <RichText data={t.content} />,
   }))
   return (
     <Section section={block.section}>
@@ -117,17 +118,20 @@ function StandardCard({ card }: { card: CardData }) {
   )
 }
 
-const photoCard =
-  'group relative block aspect-[4/5] overflow-hidden rounded-xl bg-muted shadow-sm transition-shadow hover:shadow-md'
+const photoCard = 'group relative block aspect-[4/5] rounded-xl shadow-sm transition-shadow hover:shadow-md'
 
-/** The whole card is the link. The description opens on hover or keyboard focus, and stays open where there is no hover. */
+/**
+ * The whole card is the link. The description opens on hover or keyboard focus, and stays open where there is no hover.
+ * Photo and overlay are clipped once as a group (`clip-path`): clipping each to the rounded corners on its own lets
+ * the photo and the background show along the bottom corners.
+ */
 function PhotoCard({ card }: { card: CardData }) {
   const href = resolveHref(card.link)
   const content = (
-    <>
+    <div className="absolute inset-0 bg-muted [clip-path:inset(0_round_var(--radius-xl))]">
       <Media media={card.image} sizes="(min-width: 1024px) 25vw, (min-width: 576px) 50vw, 100vw" />
       <div className="absolute inset-x-0 bottom-0 bg-black/75 px-4.5 py-3.5 text-brand-foreground">
-        <h3 className={cn('text-h3 leading-snug', href && 'transition-colors group-hover:text-wheat-300')}>{card.title}</h3>
+        <h3 className={cn('text-h4', href && 'transition-colors group-hover:text-wheat-300')}>{card.title}</h3>
         {card.text && (
           <div className="grid grid-rows-[0fr] transition-[grid-template-rows] duration-200 group-hover:grid-rows-[1fr] group-focus-visible:grid-rows-[1fr] motion-reduce:transition-none [@media(hover:none)]:grid-rows-[1fr]">
             <div className="min-h-0 overflow-hidden">
@@ -136,7 +140,7 @@ function PhotoCard({ card }: { card: CardData }) {
           </div>
         )}
       </div>
-    </>
+    </div>
   )
   if (!href) return <div className={photoCard}>{content}</div>
   return (
@@ -342,8 +346,22 @@ async function PengurusListSection({ block }: { block: B<'pengurusList'> }) {
   )
 }
 
-async function ContactSection({ block, formSlot }: { block: B<'contact'>; formSlot?: ReactNode }) {
+function DownloadsSection({ block, ctx }: { block: B<'downloads'>; ctx: BlockContext }) {
+  return (
+    <Section section={block.section}>
+      <DownloadsList
+        basePath={ctx.path}
+        params={ctx.searchParams}
+        perPage={block.limit ?? 10}
+        categoryIds={ids(block.categories)}
+      />
+    </Section>
+  )
+}
+
+async function ContactSection({ block }: { block: B<'contact'> }) {
   const s = await getSiteSettings()
+  const form = typeof block.form === 'object' ? block.form : null
   const rows = [
     s.address && { icon: MapPin, label: 'Alamat', value: s.address, href: s.mapUrl || undefined },
     ...(s.phones ?? []).map((p) => ({
@@ -360,7 +378,7 @@ async function ContactSection({ block, formSlot }: { block: B<'contact'>; formSl
   const details = block.showDetails !== false && rows.length > 0
   return (
     <Section section={block.section}>
-      <div className={cn('grid gap-9', details && formSlot && '@4xl:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)]')}>
+      <div className={cn('grid gap-9', details && form && '@4xl:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)]')}>
         {details && (
           <ul className="flex flex-col gap-4.5">
             {rows.map(({ icon: I, label, value, href }, i) => (
@@ -387,7 +405,7 @@ async function ContactSection({ block, formSlot }: { block: B<'contact'>; formSl
             ))}
           </ul>
         )}
-        {formSlot}
+        {form && <CmsForm form={form} className={details ? undefined : 'mx-auto w-full max-w-(--container-prose)'} />}
       </div>
     </Section>
   )
@@ -430,6 +448,7 @@ export function RenderBlocks({ blocks, ctx }: { blocks?: Page['layout']; ctx: Bl
           case 'quote':
           case 'list':
           case 'gridList':
+          case 'stats':
             return <NestedSection key={key} block={block} headingAs={ctx.nestedHeading} />
           case 'mediaText':
             return <MediaTextSection key={key} block={block} />
@@ -441,6 +460,8 @@ export function RenderBlocks({ blocks, ctx }: { blocks?: Page['layout']; ctx: Bl
             return <UnitListSection key={key} block={block} />
           case 'newsList':
             return <NewsListSection key={key} block={block} ctx={ctx} />
+          case 'downloads':
+            return <DownloadsSection key={key} block={block} ctx={ctx} />
           case 'testimonials':
             return <TestimonialsSection key={key} block={block} />
           case 'pengurusList':

@@ -5,11 +5,17 @@ import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
 import sharp from 'sharp'
 
+import { Albums } from './collections/Albums'
+import { FileCategories } from './collections/FileCategories'
+import { Files } from './collections/Files'
+import { GalleryImages } from './collections/GalleryImages'
+import { Journals } from './collections/Journals'
 import { Media } from './collections/Media'
 import { News } from './collections/News'
 import { NewsCategories } from './collections/NewsCategories'
 import { Pages } from './collections/Pages'
 import { Pengurus } from './collections/Pengurus'
+import { Prayers } from './collections/Prayers'
 import { Testimonials } from './collections/Testimonials'
 import { Units } from './collections/Units'
 import { Users } from './collections/Users'
@@ -41,7 +47,22 @@ export default buildConfig({
       ],
     },
   },
-  collections: [Pages, News, NewsCategories, Units, Pengurus, Testimonials, Media, Users],
+  collections: [
+    Pages,
+    News,
+    NewsCategories,
+    Prayers,
+    Journals,
+    Albums,
+    GalleryImages,
+    Files,
+    FileCategories,
+    Units,
+    Pengurus,
+    Testimonials,
+    Media,
+    Users,
+  ],
   globals: [SiteSettings, Navigation],
   editor: lexicalEditor({
     features: ({ defaultFeatures }) => [

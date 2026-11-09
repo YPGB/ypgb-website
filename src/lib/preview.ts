@@ -10,5 +10,14 @@ export const pagePath = (page?: PageRef | null): string => {
 
 export const newsPath = (slug?: string | null): string => `/berita/${slug ?? ''}`
 
+/** CMS pages whose URLs are also the parents of a collection's documents. */
+export const PRAYER_ROOT = 'doa'
+export const JOURNAL_ROOT = 'jurnal'
+export const ALBUM_ROOT = 'galeri'
+
+export const prayerPath = (slug?: string | null): string => `/${PRAYER_ROOT}/${slug ?? ''}`
+export const journalPath = (slug?: string | null): string => `/${JOURNAL_ROOT}/${slug ?? ''}`
+export const albumPath = (slug?: string | null): string => `/${ALBUM_ROOT}/${slug ?? ''}`
+
 export const previewUrl = (path: string): string =>
   `${serverUrl}/next/preview?${new URLSearchParams({ path })}`

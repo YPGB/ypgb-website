@@ -1,5 +1,10 @@
 import {
+  ArrowRight,
   Award,
+  Download,
+  ExternalLink,
+  FileText,
+  MessageCircle,
   Baby,
   BookOpenText,
   CalendarDays,
@@ -52,6 +57,11 @@ const icons: Record<IconName, LucideIcon> = {
   'map-pin': MapPin,
   phone: Phone,
   mail: Mail,
+  'message-circle': MessageCircle,
+  'arrow-right': ArrowRight,
+  download: Download,
+  'file-text': FileText,
+  'external-link': ExternalLink,
 }
 
 export function Icon({ name, ...props }: { name?: string | null } & LucideProps) {
