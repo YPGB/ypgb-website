@@ -589,6 +589,11 @@ export interface Page {
                      * Leave empty to show all.
                      */
                     limit?: number | null;
+                    /**
+                     * Search, year (and unit for albums) with page numbers.
+                     */
+                    showFilters?: boolean | null;
+                    perPage?: ('12' | '24' | '36') | null;
                     cards?:
                       | {
                           icon?:
@@ -1186,6 +1191,11 @@ export interface Page {
              * Leave empty to show all.
              */
             limit?: number | null;
+            /**
+             * Search, year (and unit for albums) with page numbers.
+             */
+            showFilters?: boolean | null;
+            perPage?: ('12' | '24' | '36') | null;
             cards?:
               | {
                   icon?:
@@ -2889,6 +2899,8 @@ export interface PagesSelect<T extends boolean = true> {
                                 source?: T;
                                 sourceCollection?: T;
                                 limit?: T;
+                                showFilters?: T;
+                                perPage?: T;
                                 cards?:
                                   | T
                                   | {
@@ -3284,6 +3296,8 @@ export interface PagesSelect<T extends boolean = true> {
               source?: T;
               sourceCollection?: T;
               limit?: T;
+              showFilters?: T;
+              perPage?: T;
               cards?:
                 | T
                 | {

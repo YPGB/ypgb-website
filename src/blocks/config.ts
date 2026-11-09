@@ -146,6 +146,10 @@ export const MediaTextBlock: Block = {
   ],
 }
 
+/** Card Grid sources that can show a filtered, paged archive. */
+const filterable = (s?: Record<string, unknown>) =>
+  s?.source === 'collection' && (s?.sourceCollection === 'journals' || s?.sourceCollection === 'albums')
+
 export const CardGridBlock: Block = {
   slug: 'cardGrid',
   labels: { singular: 'Card Grid', plural: 'Card Grids' },
@@ -203,8 +207,30 @@ export const CardGridBlock: Block = {
           admin: {
             width: '33%',
             description: 'Leave empty to show all.',
-            condition: (_, s) => s?.source === 'collection',
+            condition: (_, s) => s?.source === 'collection' && !(filterable(s) && s?.showFilters),
           },
+        },
+      ],
+    },
+    {
+      type: 'row',
+      fields: [
+        {
+          name: 'showFilters',
+          type: 'checkbox',
+          label: 'Show filters',
+          admin: {
+            width: '50%',
+            description: 'Search, year (and unit for albums) with page numbers.',
+            condition: (_, s) => filterable(s),
+          },
+        },
+        {
+          name: 'perPage',
+          type: 'select',
+          defaultValue: '12',
+          options: ['12', '24', '36'].map((value) => ({ label: `${value} per page`, value })),
+          admin: { width: '50%', condition: (_, s) => filterable(s) && Boolean(s?.showFilters) },
         },
       ],
     },

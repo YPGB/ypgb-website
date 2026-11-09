@@ -66,13 +66,14 @@ export const getPagePaths = unstable_cache(
   { tags: [TAGS.pages] },
 )
 
-type NewsQuery = { limit?: number; page?: number; categoryIds?: number[]; ids?: number[] }
+type NewsQuery = { limit?: number; page?: number; categoryIds?: number[]; ids?: number[]; filter?: Where }
 
 export const getNewsList = unstable_cache(
-  async ({ limit = 9, page = 1, categoryIds, ids }: NewsQuery) => {
-    const where: Where = { _status: { equals: 'published' } }
-    if (ids?.length) where.id = { in: ids }
-    else if (categoryIds?.length) where.category = { in: categoryIds }
+  async ({ limit = 9, page = 1, categoryIds, ids, filter }: NewsQuery) => {
+    const base: Where = { _status: { equals: 'published' } }
+    if (ids?.length) base.id = { in: ids }
+    else if (categoryIds?.length) base.category = { in: categoryIds }
+    const where: Where = filter ? { and: [base, filter] } : base
     return (await getPayloadClient()).find({
       collection: 'news',
       where,
@@ -254,10 +255,10 @@ export const getAlbumList = unstable_cache(
 )
 
 export const getFileList = unstable_cache(
-  async ({ limit, page, categoryIds }: { limit: number; page: number; categoryIds: number[] }) =>
+  async ({ limit, page, categoryIds, filter }: { limit: number; page: number; categoryIds: number[]; filter?: Where }) =>
     (await getPayloadClient()).find({
       collection: 'files',
-      where: { category: { in: categoryIds } },
+      where: filter ? { and: [{ category: { in: categoryIds } }, filter] } : { category: { in: categoryIds } },
       sort: '-date',
       limit,
       page,
@@ -295,4 +296,61 @@ export const getTestimonials = unstable_cache(
     ).docs,
   ['testimonials'],
   { tags: [TAGS.testimonials] },
+)
+
+/** One page of published journals or albums for a filtered Card Grid. */
+export const getCollectionPage = unstable_cache(
+  async ({
+    collection,
+    limit,
+    page,
+    filter,
+  }: {
+    collection: 'journals' | 'albums'
+    limit: number
+    page: number
+    filter?: Where
+  }) => {
+    const published: Where = { _status: { equals: 'published' } }
+    return (await getPayloadClient()).find({
+      collection,
+      where: filter ? { and: [published, filter] } : published,
+      sort: '-publishedAt',
+      limit,
+      page,
+      depth: 1,
+    })
+  },
+  ['collection-page'],
+  { tags: [TAGS.journals, TAGS.albums] },
+)
+
+/** The years that have items, newest first, for an archive's year dropdown. */
+export const getArchiveYears = unstable_cache(
+  async ({
+    collection,
+    field,
+    filter,
+  }: {
+    collection: 'news' | 'files' | 'journals' | 'albums'
+    field: 'publishedAt' | 'date'
+    filter?: Where
+  }) => {
+    const { docs } = await (await getPayloadClient()).find({
+      collection,
+      where: filter ?? {},
+      select: { [field]: true },
+      limit: 5000,
+      pagination: false,
+      depth: 0,
+    })
+    const years = new Set<number>()
+    for (const doc of docs as unknown as Record<string, unknown>[]) {
+      const value = doc[field]
+      if (typeof value === 'string') years.add(new Date(new Date(value).getTime() + 7 * 60 * 60 * 1000).getUTCFullYear()) // Jakarta year
+    }
+    return [...years].sort((a, b) => b - a)
+  },
+  ['archive-years'],
+  { tags: [TAGS.news, TAGS.files, TAGS.journals, TAGS.albums] },
 )

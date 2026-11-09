@@ -6,6 +6,8 @@ import { getPageChildren, getPrayerList } from '@/lib/queries'
 import { cn } from '@/lib/utils'
 import type { Page } from '@/payload-types'
 
+import { SidebarFilter } from './SidebarFilter'
+
 type SidebarLink = { title: string; href: string }
 
 export type SidebarData = {
@@ -13,6 +15,8 @@ export type SidebarData = {
   items: (SidebarLink & { id: number | string })[]
   /** The section above this one. */
   back?: { label: string; href: string } | null
+  /** Adds a search field that narrows the list as you type (prayers). */
+  searchable?: boolean
 }
 
 /** The grid that puts `PageSidebar` next to a page's content. */
@@ -35,6 +39,7 @@ export const getPrayerSidebar = async (rootTitle?: string | null): Promise<Sideb
   return {
     root: { title: rootTitle ?? 'Doa', href: `/${PRAYER_ROOT}` },
     items: prayers.map((prayer) => ({ id: prayer.id, title: prayer.name, href: prayerPath(prayer.slug) })),
+    searchable: true,
   }
 }
 
@@ -54,7 +59,16 @@ const itemClass = (active: boolean) =>
     active ? 'border-seal-600 font-semibold text-seal-700' : 'border-transparent text-muted-foreground',
   )
 
-function SidebarLinks({ root, items, back, current }: SidebarData & { current: string }) {
+function SidebarLinks({ root, items, back, searchable, current }: SidebarData & { current: string }) {
+  const link = (item: SidebarData['items'][number]) => (
+    <NextLink
+      href={item.href}
+      aria-current={item.href === current ? 'page' : undefined}
+      className={itemClass(item.href === current)}
+    >
+      {item.title}
+    </NextLink>
+  )
   return (
     <>
       {back && (
@@ -69,19 +83,19 @@ function SidebarLinks({ root, items, back, current }: SidebarData & { current: s
       <NextLink href={root.href} className="block font-heading text-h3 transition-colors hover:text-seal-700">
         {root.title}
       </NextLink>
-      <ul className="mt-3 border-l border-border">
-        {items.map((item) => (
-          <li key={item.id}>
-            <NextLink
-              href={item.href}
-              aria-current={item.href === current ? 'page' : undefined}
-              className={itemClass(item.href === current)}
-            >
-              {item.title}
-            </NextLink>
-          </li>
-        ))}
-      </ul>
+      {searchable ? (
+        <SidebarFilter
+          label={`Cari di ${root.title}`}
+          placeholder={`Cari ${root.title.toLowerCase()}…`}
+          items={items.map((item) => ({ key: item.id, title: item.title, node: link(item) }))}
+        />
+      ) : (
+        <ul className="mt-3 border-l border-border">
+          {items.map((item) => (
+            <li key={item.id}>{link(item)}</li>
+          ))}
+        </ul>
+      )}
     </>
   )
 }

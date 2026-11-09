@@ -1,9 +1,20 @@
 import { FileRow } from '@/components/cards/FileRow'
-import { getFileCategories, getFileList } from '@/lib/queries'
+import { getArchiveYears, getFileCategories, getFileList } from '@/lib/queries'
 
-import { ArchivePager, type ArchiveParams, CategoryChips } from './ArchiveNav'
+import { ArchiveFilters } from './ArchiveFilters'
+import {
+  andWhere,
+  ArchivePager,
+  type ArchiveParams,
+  CategoryChips,
+  EmptyResult,
+  readArchive,
+  ResultCount,
+  searchWhere,
+  yearWhere,
+} from './ArchiveNav'
 
-/** Files from the chosen categories, newest first, with category chips (two or more categories) and pagination. */
+/** Files from the chosen categories, newest first, with category chips (two or more categories), search, year and pagination. */
 export async function DownloadsList({
   basePath,
   params,
@@ -15,15 +26,22 @@ export async function DownloadsList({
   perPage: number
   categoryIds: number[]
 }) {
-  const { kategori, halaman } = (await params) ?? {}
-  const page = Math.max(1, Number(halaman) || 1)
+  const { state, page } = await readArchive(params)
   const categories = (await getFileCategories()).filter((c) => categoryIds.includes(c.id))
-  const active = categories.find((c) => c.slug === kategori)
-  const files = await getFileList({ limit: perPage, page, categoryIds: active ? [active.id] : categoryIds })
+  const active = categories.find((c) => c.slug === state.kategori)
+  const scope = active ? [active.id] : categoryIds
+  const filter = andWhere(searchWhere(state.cari, ['title', 'description']), yearWhere(state.tahun, 'date'))
+  const [files, years] = await Promise.all([
+    getFileList({ limit: perPage, page, categoryIds: scope, filter }),
+    getArchiveYears({ collection: 'files', field: 'date', filter: { category: { in: scope } } }),
+  ])
+  const current = { ...state, kategori: active?.slug ?? null }
 
   return (
-    <div className="flex flex-col gap-9">
-      {categories.length > 1 && <CategoryChips basePath={basePath} categories={categories} active={active?.slug} />}
+    <div className="flex flex-col gap-6.5">
+      {categories.length > 1 && <CategoryChips basePath={basePath} categories={categories} state={current} />}
+      <ArchiveFilters basePath={basePath} state={current} years={years} placeholder="Cari dokumen…" />
+      <ResultCount total={files.totalDocs} noun="dokumen" state={current} />
 
       {files.docs.length ? (
         <ul className="divide-y divide-border border-y border-border">
@@ -32,10 +50,10 @@ export async function DownloadsList({
           ))}
         </ul>
       ) : (
-        <p className="py-13 text-center text-muted-foreground">Belum ada dokumen.</p>
+        <EmptyResult state={current} noun="dokumen" />
       )}
 
-      <ArchivePager basePath={basePath} active={active?.slug} page={page} totalPages={files.totalPages} />
+      <ArchivePager basePath={basePath} state={current} page={page} totalPages={files.totalPages} />
     </div>
   )
 }

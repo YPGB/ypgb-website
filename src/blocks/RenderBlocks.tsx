@@ -16,7 +16,9 @@ import { getSiteSettings } from '@/lib/site-settings'
 import { cn } from '@/lib/utils'
 import type { Page } from '@/payload-types'
 
-import { type CardData, getCards } from './cardData'
+import { ArchiveFilters } from './ArchiveFilters'
+import { ArchivePager, EmptyResult, readArchive, ResultCount } from './ArchiveNav'
+import { type CardData, getCardArchive, getCards, isCardArchive } from './cardData'
 import { containBlocks } from './contain'
 import { ContentGroupSection, NestedSection } from './ContentBlocks'
 import { DownloadsList } from './DownloadsList'
@@ -90,12 +92,43 @@ const gridCols: Record<string, string> = {
 }
 
 async function CardGridSection({ block, ctx }: { block: B<'cardGrid'>; ctx: BlockContext }) {
+  if (isCardArchive(block)) return <CardGridArchive block={block} ctx={ctx} />
   const cards = await getCards(block, ctx.pageId)
   if (!cards.length) return null
   return (
     <Section section={block.section}>
       <div className={cn('grid gap-6', gridCols[block.columns ?? '3'])}>
         {cards.map((c) => (block.style === 'photo' ? <PhotoCard key={c.id} card={c} /> : <StandardCard key={c.id} card={c} />))}
+      </div>
+    </Section>
+  )
+}
+
+/** Journals or albums with search, year, unit (albums) and page numbers. */
+async function CardGridArchive({ block, ctx }: { block: B<'cardGrid'>; ctx: BlockContext }) {
+  const { state, page } = await readArchive(ctx.searchParams)
+  const archive = await getCardArchive(block, state, page)
+  return (
+    <Section section={block.section}>
+      <div className="flex flex-col gap-6.5">
+        <ArchiveFilters
+          basePath={ctx.path}
+          state={state}
+          years={archive.years}
+          units={archive.units}
+          placeholder={archive.placeholder}
+        />
+        <ResultCount total={archive.totalDocs} noun={archive.noun} state={state} />
+        {archive.cards.length ? (
+          <div className={cn('grid gap-6', gridCols[block.columns ?? '3'])}>
+            {archive.cards.map((c) =>
+              block.style === 'photo' ? <PhotoCard key={c.id} card={c} /> : <StandardCard key={c.id} card={c} />,
+            )}
+          </div>
+        ) : (
+          <EmptyResult state={state} noun={archive.noun} />
+        )}
+        <ArchivePager basePath={ctx.path} state={state} page={page} totalPages={archive.totalPages} />
       </div>
     </Section>
   )

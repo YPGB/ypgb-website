@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import type { IconName } from '@/fields/icon'
 import type { ButtonAppearance } from '@/fields/link'
 import { pagePath } from '@/lib/preview'
+import { cn } from '@/lib/utils'
 import type { File as FileDoc, Page } from '@/payload-types'
 
 export type LinkData = {
@@ -90,6 +91,10 @@ function LinkIcons({ link, arrow, external, children }: { link: LinkData; arrow?
   )
 }
 
+/** Text links: icons sit on the text line at the text's size, and wrap with the last word. */
+const inlineIcons =
+  '[&_svg]:inline-block [&_svg]:size-[0.9em] [&_svg]:shrink-0 [&_svg]:align-[-0.1em] [&_[data-icon=inline-end]]:ml-1 [&_[data-icon=inline-start]]:mr-1.5'
+
 export function CMSLink({ link, asButton = true, size = 'lg', className, children, arrow }: Props) {
   const href = resolveHref(link)
   if (!href || !link) return null
@@ -108,12 +113,13 @@ export function CMSLink({ link, asButton = true, size = 'lg', className, childre
   }
 
   if (!asButton) {
+    const textLink = cn(inlineIcons, className)
     return external ? (
-      <a href={href} className={className} {...anchorProps}>
+      <a href={href} className={textLink} {...anchorProps}>
         {content}
       </a>
     ) : (
-      <NextLink href={href} className={className} {...anchorProps}>
+      <NextLink href={href} className={textLink} {...anchorProps}>
         {content}
       </NextLink>
     )

@@ -390,9 +390,13 @@ const whatsappUrl = settings.whatsapp ? `https://wa.me/${settings.whatsapp}` : '
 /** Site Settings + Navigation. Links only pages that are published. */
 async function writeGlobals() {
   const groupPhoto = await media('DSC_1706.JPG')
+  const logo = await media('logo.png')
   await payload.updateGlobal({
     slug: 'site-settings',
     data: {
+      // Only fill empty slots, so a logo chosen in the admin stays.
+      ...(logo && !settings.logo ? { logo } : {}),
+      ...(logo && !settings.favicon ? { favicon: logo } : {}),
       description: 'Pendidikan Katolik–Kapusin sejak 1932. Tujuh unit sekolah dari TK hingga SMA di Pontianak.',
       foundedYear: 1973,
       address: settings.address?.replace(/\b78117\b/, '78124') ?? settings.address,
